@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude"
+      xml:lang="en"
+      lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="author" content=""/>
+        <meta name="CVS-Id" content="$Id: $"/>
+        <title>XProc Error Codes</title>
+    </head>
+    <body>
+  	     <div class="section">
+            <h3>
+                <a name="app.static-errors" id="app.static-errors" shape="rect"/>E.1 Static Errors</h3>
+            <p>The following <em class="glossterm">
+                    <a href="#dt-static-error" shape="rect">static errors</a>
+                </em> are defined:</p>
+            <div id="static-error-summary">
+                <h5>Static Errors</h5>
+                <dl class="errs">
+                    <dt>
+                        <a name="err.S0001" id="err.S0001" shape="rect"/>
+                        <code class="errqname">err:XS0001</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if there are any loops in the connections
+between steps: no step can be connected to itself nor can there be
+any sequence of connections through other steps that leads back to
+itself.</p>
+                        <p>See: <a href="#err.inline.S0001" shape="rect">Connections</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0002" id="err.S0002" shape="rect"/>
+                        <code class="errqname">err:XS0002</code>
+                    </dt>
+                    <dd>
+                        <p>All steps in the same scope must have unique names: it is a
+static error if two steps with the same name appear in the same
+scope.</p>
+                        <p>See: <a href="#err.inline.S0002" shape="rect">Scoping of Names</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0004" id="err.S0004" shape="rect"/>
+                        <code class="errqname">err:XS0004</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to declare two or more options on the same
+step with the same name.</p>
+                        <p>See: <a href="#err.inline.S0004" shape="rect">p:option</a>, <a href="#err.inline.S0004.1" shape="rect">p:with-option</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0006" id="err.S0006" shape="rect"/>
+                        <code class="errqname">err:XS0006</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the primary output port has no binding
+and the last step in the subpipeline does not have a primary output
+port.</p>
+                        <p>See: <a href="#err.inline.S0006" shape="rect">p:for-each</a>, <a href="#err.inline.S0006.1" shape="rect">p:viewport</a>, <a href="#err.inline.S0006.2" shape="rect">Declaring pipelines</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0007" id="err.S0007" shape="rect"/>
+                        <code class="errqname">err:XS0007</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if two subpipelines in a p:choose declare
+different outputs.</p>
+                        <p>See: <a href="#err.inline.S0007" shape="rect">p:choose</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0008" id="err.S0008" shape="rect"/>
+                        <code class="errqname">err:XS0008</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if any element in the XProc namespace has
+attributes not defined by this specification unless they are
+extension attributes.</p>
+                        <p>See: <a href="#err.inline.S0008" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0009" id="err.S0009" shape="rect"/>
+                        <code class="errqname">err:XS0009</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the p:group and p:catch subpipelines
+declare different outputs.</p>
+                        <p>See: <a href="#err.inline.S0009" shape="rect">p:try</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0010" id="err.S0010" shape="rect"/>
+                        <code class="errqname">err:XS0010</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if a pipeline contains a step whose
+specified inputs, outputs, and options do not match the signature
+for steps of that type.</p>
+                        <p>See: <a href="#err.inline.S0010" shape="rect">Extension Steps</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0011" id="err.S0011" shape="rect"/>
+                        <code class="errqname">err:XS0011</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to identify two ports with the same name on
+the same step.</p>
+                        <p>See: <a href="#err.inline.S0011" shape="rect">Document Inputs</a>, <a href="#err.inline.S0011.1" shape="rect">Parameter Inputs</a>, <a href="#err.inline.S0011.2" shape="rect">p:output</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0014" id="err.S0014" shape="rect"/>
+                        <code class="errqname">err:XS0014</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to identify more than one output port as
+primary.</p>
+                        <p>See: <a href="#err.inline.S0014" shape="rect">p:output</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0015" id="err.S0015" shape="rect"/>
+                        <code class="errqname">err:XS0015</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if a compound step has no contained
+steps.</p>
+                        <p>See: <a href="#err.inline.S0015" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0016" id="err.S0016" shape="rect"/>
+                        <code class="errqname">err:XS0016</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the select attribute is not
+specified.</p>
+                        <p>See: <a href="#err.inline.S0016" shape="rect">p:variable</a>, <a href="#err.inline.S0016.1" shape="rect">p:with-option</a>, <a href="#err.inline.S0016.2" shape="rect">p:with-param</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0017" id="err.S0017" shape="rect"/>
+                        <code class="errqname">err:XS0017</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify that an option is both required
+and has a default value.</p>
+                        <p>See: <a href="#err.inline.S0017" shape="rect">p:option</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0018" id="err.S0018" shape="rect"/>
+                        <code class="errqname">err:XS0018</code>
+                    </dt>
+                    <dd>
+                        <p>If an option is required, it is a static error to invoke the
+step without specifying a value for that option.</p>
+                        <p>See: <a href="#err.inline.S0018" shape="rect">p:option</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0019" id="err.S0019" shape="rect"/>
+                        <code class="errqname">err:XS0019</code>
+                    </dt>
+                    <dd>
+                        <p>it is a static error for a variable's document binding to refer
+to the output port of any step in the surrounding container's
+contained steps</p>
+                        <p>See: <a href="#err.inline.S0019" shape="rect">p:variable</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0020" id="err.S0020" shape="rect"/>
+                        <code class="errqname">err:XS0020</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the binding attribute on p:namespaces is
+specified and its value is not the name of an in-scope binding.</p>
+                        <p>See: <a href="#err.inline.S0020" shape="rect">Namespaces on variables,
+options, and parameters</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0021" id="err.S0021" shape="rect"/>
+                        <code class="errqname">err:XS0021</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the import references in a pipeline or
+pipeline library are circular.</p>
+                        <p>See: <a href="#err.inline.S0021" shape="rect">p:library</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0022" id="err.S0022" shape="rect"/>
+                        <code class="errqname">err:XS0022</code>
+                    </dt>
+                    <dd>
+                        <p>In all cases except the p:output of a compound step, it is a
+static error if the port identified by a p:pipe is not in the
+readable ports of the step that contains the p:pipe.</p>
+                        <p>See: <a href="#err.inline.S0022" shape="rect">p:pipe</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0024" id="err.S0024" shape="rect"/>
+                        <code class="errqname">err:XS0024</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the content of the p:inline element does
+not consist of exactly one element, optionally preceded and/or
+followed by any number of processing instructions, comments or
+whitespace characters.</p>
+                        <p>See: <a href="#err.inline.S0024" shape="rect">p:inline</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0025" id="err.S0025" shape="rect"/>
+                        <code class="errqname">err:XS0025</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the expanded-QName value of the type
+attribute is in no namespace.</p>
+                        <p>See: <a href="#err.inline.S0025" shape="rect">p:declare-step</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0026" id="err.S0026" shape="rect"/>
+                        <code class="errqname">err:XS0026</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the port specified on the p:log is not
+the name of an output port on the step in which it appears or if
+more than one p:log element is applied to the same port.</p>
+                        <p>See: <a href="#err.inline.S0026" shape="rect">p:log</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0027" id="err.S0027" shape="rect"/>
+                        <code class="errqname">err:XS0027</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if an option is specified with both the
+shortcut form and the long form.</p>
+                        <p>See: <a href="#err.inline.S0027" shape="rect">Syntactic Shortcut for Option
+Values</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0028" id="err.S0028" shape="rect"/>
+                        <code class="errqname">err:XS0028</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to declare an option or variable in the
+XProc namespace.</p>
+                        <p>See: <a href="#err.inline.S0028" shape="rect">p:variable</a>, <a href="#err.inline.S0028.1" shape="rect">p:option</a>, <a href="#err.inline.S0028.2" shape="rect">p:with-param</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0029" id="err.S0029" shape="rect"/>
+                        <code class="errqname">err:XS0029</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify a binding for a p:output inside
+a p:declare-step for an atomic step.</p>
+                        <p>See: <a href="#err.inline.S0029" shape="rect">p:output</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0030" id="err.S0030" shape="rect"/>
+                        <code class="errqname">err:XS0030</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify that more than one input port is
+the primary.</p>
+                        <p>See: <a href="#err.inline.S0030" shape="rect">Document Inputs</a>, <a href="#err.inline.S0030.1" shape="rect">Parameter Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0031" id="err.S0031" shape="rect"/>
+                        <code class="errqname">err:XS0031</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to use an option on an atomic step that is
+not declared on steps of that type.</p>
+                        <p>See: <a href="#err.inline.S0031" shape="rect">Syntactic Shortcut for Option
+Values</a>, <a href="#err.inline.S0031.1" shape="rect">p:with-option</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0032" id="err.S0032" shape="rect"/>
+                        <code class="errqname">err:XS0032</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if no binding is provided and the default
+readable port is undefined.</p>
+                        <p>See: <a href="#err.inline.S0032" shape="rect">Document Inputs</a>, <a href="#err.inline.S0032.1" shape="rect">p:variable</a>, <a href="#err.inline.S0032.2" shape="rect">p:with-option</a>, <a href="#err.inline.S0032.3" shape="rect">p:with-param</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0033" id="err.S0033" shape="rect"/>
+                        <code class="errqname">err:XS0033</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify any kind of input other than
+“document” or “parameter”.</p>
+                        <p>See: <a href="#err.inline.S0033" shape="rect">Parameter Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0034" id="err.S0034" shape="rect"/>
+                        <code class="errqname">err:XS0034</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the specified port is not a parameter
+input port or if no port is specified and the step does not have a
+primary parameter input port.</p>
+                        <p>See: <a href="#err.inline.S0034" shape="rect">p:with-param</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0035" id="err.S0035" shape="rect"/>
+                        <code class="errqname">err:XS0035</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the declaration of a parameter input
+port contains a binding; parameter input port declarations must be
+empty.</p>
+                        <p>See: <a href="#err.inline.S0035" shape="rect">Parameter Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0036" id="err.S0036" shape="rect"/>
+                        <code class="errqname">err:XS0036</code>
+                    </dt>
+                    <dd>
+                        <p>All the step types in a pipeline must have unique names: it is a
+static error if any step type name is built-in and/or declared or
+defined more than once in the same scope.</p>
+                        <p>See: <a href="#err.inline.S0036" shape="rect">Scoping of Names</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0037" id="err.S0037" shape="rect"/>
+                        <code class="errqname">err:XS0037</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if any step directly contains text nodes
+that do not consist entirely of whitespace.</p>
+                        <p>See: <a href="#err.inline.S0037" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0038" id="err.S0038" shape="rect"/>
+                        <code class="errqname">err:XS0038</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if any required attribute is not
+provided.</p>
+                        <p>See: <a href="#err.inline.S0038" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0039" id="err.S0039" shape="rect"/>
+                        <code class="errqname">err:XS0039</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the port specified on the
+p:serialization is not the name of an output port on the pipeline
+in which it appears or if more than one p:serialization element is
+applied to the same port.</p>
+                        <p>See: <a href="#err.inline.S0039" shape="rect">p:serialization</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0040" id="err.S0040" shape="rect"/>
+                        <code class="errqname">err:XS0040</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify any value other than true.</p>
+                        <p>See: <a href="#err.inline.S0040" shape="rect">Parameter Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0041" id="err.S0041" shape="rect"/>
+                        <code class="errqname">err:XS0041</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to specify both binding and element on the
+same p:namespaces element.</p>
+                        <p>See: <a href="#err.inline.S0041" shape="rect">Namespaces on variables,
+options, and parameters</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0042" id="err.S0042" shape="rect"/>
+                        <code class="errqname">err:XS0042</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to attempt to provide a binding for an
+input port on the declaration of an atomic step.</p>
+                        <p>See: <a href="#err.inline.S0042" shape="rect">Document Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0044" id="err.S0044" shape="rect"/>
+                        <code class="errqname">err:XS0044</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if any element in the XProc namespace or
+any step has element children other than those specified for it by
+this specification. In particular, the presence of atomic steps for
+which there is no visible declaration may raise this error.</p>
+                        <p>See: <a href="#err.inline.S0044" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0048" id="err.S0048" shape="rect"/>
+                        <code class="errqname">err:XS0048</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to use a declared step as a compound
+step.</p>
+                        <p>See: <a href="#err.inline.S0048" shape="rect">Extension Steps</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0050" id="err.S0050" shape="rect"/>
+                        <code class="errqname">err:XS0050</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if a pipeline attempts to import two (or
+more) libraries with URIs that identify steps associated with a
+particular version of XProc.</p>
+                        <p>See: <a href="#err.inline.S0050" shape="rect">p:import</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0051" id="err.S0051" shape="rect"/>
+                        <code class="errqname">err:XS0051</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the except-prefixes attribute on
+p:namespaces does not contain a list of tokens or if any of those
+tokens is not a prefix bound to a namespace in the in-scope
+namespaces of the p:namespaces element.</p>
+                        <p>See: <a href="#err.inline.S0051" shape="rect">Namespaces on variables,
+options, and parameters</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0052" id="err.S0052" shape="rect"/>
+                        <code class="errqname">err:XS0052</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the URI of a p:import cannot be
+retrieved or if, once retrieved, it does not point to a p:library,
+p:declare-step, or p:pipeline.</p>
+                        <p>See: <a href="#err.inline.S0052" shape="rect">p:import</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0053" id="err.S0053" shape="rect"/>
+                        <code class="errqname">err:XS0053</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error to import a single pipeline if that
+pipeline does not have a type.</p>
+                        <p>See: <a href="#err.inline.S0053" shape="rect">p:import</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0055" id="err.S0055" shape="rect"/>
+                        <code class="errqname">err:XS0055</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if a primary parameter input port has no
+binding and the pipeline that contains the step has no primary
+parameter input port.</p>
+                        <p>See: <a href="#err.inline.S0055" shape="rect">Parameter Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0057" id="err.S0057" shape="rect"/>
+                        <code class="errqname">err:XS0057</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if a namespace prefix is used within the
+exclude-inline-prefixes attribute and there is no namespace binding
+in scope for that prefix.</p>
+                        <p>See: <a href="#err.inline.S0057" shape="rect">p:inline</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.S0058" id="err.S0058" shape="rect"/>
+                        <code class="errqname">err:XS0058</code>
+                    </dt>
+                    <dd>
+                        <p>It is a static error if the value #default is used within the
+exclude-inline-prefixes attribute and there is no default namespace
+in scope.</p>
+                        <p>See: <a href="#err.inline.S0058" shape="rect">p:inline</a>
+                        </p>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+  	     <div class="section">
+            <h3>
+                <a name="app.dynamic-errors" id="app.dynamic-errors" shape="rect"/>E.2 Dynamic Errors</h3>
+            <p>The following <em class="glossterm">
+                    <a href="#dt-dynamic-error" shape="rect">dynamic errors</a>
+                </em> are defined:</p>
+            <div id="dynamic-error-summary">
+                <h5>Dynamic Errors</h5>
+                <dl class="errs">
+                    <dt>
+                        <a name="err.D0001" id="err.D0001" shape="rect"/>
+                        <code class="errqname">err:XD0001</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a non-XML resource is produced on a
+step output or arrives on a step input.</p>
+                        <p>See: <a href="#err.inline.D0001" shape="rect">Inputs and Outputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0002" id="err.D0002" shape="rect"/>
+                        <code class="errqname">err:XD0002</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the processor attempts to retrieve the
+URI specified on a p:document or p:data and fails.</p>
+                        <p>See: <a href="#err.inline.D0002" shape="rect">Associating Documents with
+Ports</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0003" id="err.D0003" shape="rect"/>
+                        <code class="errqname">err:XD0003</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the viewport source does not provide
+exactly one document.</p>
+                        <p>See: <a href="#err.inline.D0003" shape="rect">p:viewport</a>, <a href="#err.inline.D0003.1" shape="rect">p:viewport-source</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0004" id="err.D0004" shape="rect"/>
+                        <code class="errqname">err:XD0004</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if no subpipeline is selected by the
+p:choose and no default is provided.</p>
+                        <p>See: <a href="#err.inline.D0004" shape="rect">p:choose</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0005" id="err.D0005" shape="rect"/>
+                        <code class="errqname">err:XD0005</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the xpath-context is bound to a
+sequence of documents.</p>
+                        <p>See: <a href="#err.inline.D0005" shape="rect">p:xpath-context</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0006" id="err.D0006" shape="rect"/>
+                        <code class="errqname">err:XD0006</code>
+                    </dt>
+                    <dd>
+                        <p>If sequence is not specified, or has the value false, then it is
+a dynamic error unless exactly one document appears on the declared
+port.</p>
+                        <p>See: <a href="#err.inline.D0006" shape="rect">Document Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0007" id="err.D0007" shape="rect"/>
+                        <code class="errqname">err:XD0007</code>
+                    </dt>
+                    <dd>
+                        <p>If sequence is not specified on p:output, or has the value
+false, then it is a dynamic error if the step does not produce
+exactly one document on the declared port.</p>
+                        <p>See: <a href="#err.inline.D0007" shape="rect">p:output</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0008" id="err.D0008" shape="rect"/>
+                        <code class="errqname">err:XD0008</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a document sequence appears where a
+document to be used as the context node is expected.</p>
+                        <p>See: <a href="#err.inline.D0008" shape="rect">Processor XPath Context</a>,
+<a href="#err.inline.D0008.1" shape="rect">Processor XPath Context</a>, <a href="#err.inline.D0008.2" shape="rect">p:variable</a>, <a href="#err.inline.D0008.3" shape="rect">p:with-option</a>, <a href="#err.inline.D0008.4" shape="rect">p:with-param</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0009" id="err.D0009" shape="rect"/>
+                        <code class="errqname">err:XD0009</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the element attribute on p:namespaces
+is specified and it does not identify a single element node.</p>
+                        <p>See: <a href="#err.inline.D0009" shape="rect">Namespaces on variables,
+options, and parameters</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0010" id="err.D0010" shape="rect"/>
+                        <code class="errqname">err:XD0010</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the match expression on p:viewport does
+not match an element or document.</p>
+                        <p>See: <a href="#err.inline.D0010" shape="rect">p:viewport</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0011" id="err.D0011" shape="rect"/>
+                        <code class="errqname">err:XD0011</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the resource referenced by a p:document
+element does not exist, cannot be accessed, or is not a well-formed
+XML document.</p>
+                        <p>See: <a href="#err.inline.D0011" shape="rect">p:document</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0012" id="err.D0012" shape="rect"/>
+                        <code class="errqname">err:XD0012</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if any attempt is made to dereference a
+URI where the scheme of the URI reference is not supported.</p>
+                        <p>See: <a href="#err.inline.D0012" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0013" id="err.D0013" shape="rect"/>
+                        <code class="errqname">err:XD0013</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the specified namespace bindings are
+inconsistent; that is, if the same prefix is bound to two different
+namespace names.</p>
+                        <p>See: <a href="#err.inline.D0013" shape="rect">Namespaces on variables,
+options, and parameters</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0014" id="err.D0014" shape="rect"/>
+                        <code class="errqname">err:XD0014</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error for any unqualified attribute names other
+than “name”, “namespace”, or “value” to appear on a c:param
+element.</p>
+                        <p>See: <a href="#err.inline.D0014" shape="rect">The c:param element</a>,
+<a href="#err.inline.D0014.1" shape="rect">The c:param-set element</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0015" id="err.D0015" shape="rect"/>
+                        <code class="errqname">err:XD0015</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the specified QName cannot be resolved
+with the in-scope namespace declarations.</p>
+                        <p>See: <a href="#err.inline.D0015" shape="rect">System Properties</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0016" id="err.D0016" shape="rect"/>
+                        <code class="errqname">err:XD0016</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the select expression on a p:input
+returns atomic values or anything other than element or document
+nodes.</p>
+                        <p>See: <a href="#err.inline.D0016" shape="rect">Document Inputs</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0017" id="err.D0017" shape="rect"/>
+                        <code class="errqname">err:XD0017</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the running pipeline attempts to invoke
+a step which the processor does not know how to perform.</p>
+                        <p>See: <a href="#err.inline.D0017" shape="rect">Extension Steps</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0018" id="err.D0018" shape="rect"/>
+                        <code class="errqname">err:XD0018</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the parameter list contains any
+elements other than c:param.</p>
+                        <p>See: <a href="#err.inline.D0018" shape="rect">The c:param-set element</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0019" id="err.D0019" shape="rect"/>
+                        <code class="errqname">err:XD0019</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if any option value does not satisfy the
+type required for that option.</p>
+                        <p>See: <a href="#err.inline.D0019" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0020" id="err.D0020" shape="rect"/>
+                        <code class="errqname">err:XD0020</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the combination of serialization
+options specified or defaulted is not allowed.</p>
+                        <p>See: <a href="#err.inline.D0020" shape="rect">p:serialization</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0021" id="err.D0021" shape="rect"/>
+                        <code class="errqname">err:XD0021</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error for a pipeline to attempt to access a
+resource for which it has insufficient privileges or perform a step
+which is forbidden.</p>
+                        <p>See: <a href="#err.inline.D0021" shape="rect">Security Considerations</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0022" id="err.D0022" shape="rect"/>
+                        <code class="errqname">err:XD0022</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a processor that does not support PSVI
+annotations attempts to invoke a step which asserts that they are
+required.</p>
+                        <p>See: <a href="#err.inline.D0022" shape="rect">PSVIs in XProc</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0023" id="err.D0023" shape="rect"/>
+                        <code class="errqname">err:XD0023</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if an XPath expression is encountered
+which cannot be evaluated (because it is syntactically incorrect,
+contains references to unbound variables or unknown functions, or
+for any other reason).</p>
+                        <p>See: <a href="#err.inline.D0023" shape="rect">XPaths in XProc</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0024" id="err.D0024" shape="rect"/>
+                        <code class="errqname">err:XD0024</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a 2.0 processor encounters an XPath 1.0
+expression and it does not support XPath 1.0 compatibility
+mode.</p>
+                        <p>See: <a href="#err.inline.D0024" shape="rect">XPaths in XProc</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0025" id="err.D0025" shape="rect"/>
+                        <code class="errqname">err:XD0025</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the namespace attribute is specified,
+the name contains a colon, and the specified namespace is not the
+same as the in-scope namespace binding for the specified
+prefix.</p>
+                        <p>See: <a href="#err.inline.D0025" shape="rect">The c:param element</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0026" id="err.D0026" shape="rect"/>
+                        <code class="errqname">err:XD0026</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the select expression refers to the
+context or to a QName that is not the name of a preceding sibling
+p:option.</p>
+                        <p>See: <a href="#err.inline.D0026" shape="rect">p:option</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0027" id="err.D0027" shape="rect"/>
+                        <code class="errqname">err:XD0027</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the processor encounters an
+xpath-version that it does not support.</p>
+                        <p>See: <a href="#err.inline.D0027" shape="rect">XPaths in XProc</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0028" id="err.D0028" shape="rect"/>
+                        <code class="errqname">err:XD0028</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if any attribute value does not satisfy
+the type required for that attribute.</p>
+                        <p>See: <a href="#err.inline.D0028" shape="rect">Syntax Summaries</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.D0029" id="err.D0029" shape="rect"/>
+                        <code class="errqname">err:XD0029</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the document referenced by a p:data
+element does not exist, cannot be accessed, or cannot be encoded as
+specified.</p>
+                        <p>See: <a href="#err.inline.D0029" shape="rect">p:data</a>
+                        </p>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+  	     <div class="section">
+            <h3>
+                <a name="app.step-errors" id="app.step-errors" shape="rect"/>E.3 Step Errors</h3>
+            <p>The following <em class="glossterm">
+                    <a href="#dt-dynamic-error" shape="rect">dynamic errors</a>
+                </em> can be raised by steps
+in this specification:</p>
+            <div id="step-error-summary">
+                <h5>Step Errors</h5>
+                <dl class="errs">
+                    <dt>
+                        <a name="err.C0001" id="err.C0001" shape="rect"/>
+                        <code class="errqname">err:XC0001</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the requested method is not
+supported.</p>
+                        <p>See: <a href="#err.inline.C0001" shape="rect">Serialization Options</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0002" id="err.C0002" shape="rect"/>
+                        <code class="errqname">err:XC0002</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the value starts with the string
+“--”.</p>
+                        <p>See: <a href="#err.inline.C0002" shape="rect">Request Entity body
+conversion</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0003" id="err.C0003" shape="rect"/>
+                        <code class="errqname">err:XC0003</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a username or password is specified
+without specifying an auth-method, if the requested auth-method
+isn't supported, or the authentication challenge contains an
+authentication method that isn't supported.</p>
+                        <p>See: <a href="#err.inline.C0003" shape="rect">Specifying a request</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0004" id="err.C0004" shape="rect"/>
+                        <code class="errqname">err:XC0004</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the status-only attribute has the value
+true and the detailed attribute does not have the value true.</p>
+                        <p>See: <a href="#err.inline.C0004" shape="rect">Specifying a request</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0005" id="err.C0005" shape="rect"/>
+                        <code class="errqname">err:XC0005</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the request contains a c:body or
+c:multipart but the method does not allow for an entity body being
+sent with the request.</p>
+                        <p>See: <a href="#err.inline.C0005" shape="rect">Specifying a request</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0010" id="err.C0010" shape="rect"/>
+                        <code class="errqname">err:XC0010</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if an encoding of “base64” is specified
+and a character set is not, or if the specified character set is
+not supported by the implementation.</p>
+                        <p>See: <a href="#err.inline.C0010" shape="rect">p:unescape-markup</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0011" id="err.C0011" shape="rect"/>
+                        <code class="errqname">err:XC0011</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the step is not allowed to retrieve
+from the specified location.</p>
+                        <p>See: <a href="#err.inline.C0011" shape="rect">p:load</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0012" id="err.C0012" shape="rect"/>
+                        <code class="errqname">err:XC0012</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the contents of the directory path are
+not available to the step due to access restrictions in the
+environment in which the pipeline is run.</p>
+                        <p>See: <a href="#err.inline.C0012" shape="rect">p:directory-list</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0013" id="err.C0013" shape="rect"/>
+                        <code class="errqname">err:XC0013</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the pattern matches a processing
+instruction and the new name has a non-null namespace.</p>
+                        <p>See: <a href="#err.inline.C0013" shape="rect">p:rename</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0014" id="err.C0014" shape="rect"/>
+                        <code class="errqname">err:XC0014</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the XML namespace
+(http://www.w3.org/XML/1998/namespace) or the XMLNS namespace
+(http://www.w3.org/2000/xmlns/) is the value of either the from
+option or the to option.</p>
+                        <p>See: <a href="#err.inline.C0014" shape="rect">p:namespace-rename</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0016" id="err.C0016" shape="rect"/>
+                        <code class="errqname">err:XC0016</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the value supplied for any option
+specified for any step in this section is not of the type mandated
+in the step description, with phrases such as "The value of the
+some-name option must be a QName" or "the value of the some-flag
+option must be a boolean".</p>
+                        <p>See: <a href="#err.inline.C0016" shape="rect">Standard Step Library</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0017" id="err.C0017" shape="rect"/>
+                        <code class="errqname">err:XC0017</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the absolute path does not identify a
+directory.</p>
+                        <p>See: <a href="#err.inline.C0017" shape="rect">p:directory-list</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0019" id="err.C0019" shape="rect"/>
+                        <code class="errqname">err:XC0019</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the documents are not equal, and the
+value of the fail-if-not-equal option is true.</p>
+                        <p>See: <a href="#err.inline.C0019" shape="rect">p:compare</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0020" id="err.C0020" shape="rect"/>
+                        <code class="errqname">err:XC0020</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the value of a header specified via
+c:header (e.g. Content-Type) conflicts with the value for that
+header that the step and/or protocol implementation must set.</p>
+                        <p>See: <a href="#err.inline.C0020" shape="rect">Specifying a request</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0022" id="err.C0022" shape="rect"/>
+                        <code class="errqname">err:XC0022</code>
+                    </dt>
+                    <dd>
+                        <p>it is a dynamic error if the content of the c:body element does
+not consist of exactly one element, optionally preceded and/or
+followed by any number of processing instructions, comments or
+whitespace characters</p>
+                        <p>See: <a href="#err.inline.C0022" shape="rect">Request Entity body
+conversion</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0023" id="err.C0023" shape="rect"/>
+                        <code class="errqname">err:XC0023</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a select expression or match pattern
+returns a node type that is not allowed by the step.</p>
+                        <p>See: <a href="#err.inline.C0023" shape="rect">Standard Step Library</a>,
+<a href="#err.inline.C0023.1" shape="rect">p:add-attribute</a>, <a href="#err.inline.C0023.2" shape="rect">p:insert</a>, <a href="#err.inline.C0023.3" shape="rect">p:label-elements</a>, <a href="#err.inline.C0023.4" shape="rect">p:make-absolute-uris</a>, <a href="#err.inline.C0023.5" shape="rect">p:rename</a>, <a href="#err.inline.C0023.6" shape="rect">p:replace</a>, <a href="#err.inline.C0023.7" shape="rect">p:set-attributes</a>, <a href="#err.inline.C0023.8" shape="rect">p:unwrap</a>, <a href="#err.inline.C0023.9" shape="rect">p:wrap</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0025" id="err.C0025" shape="rect"/>
+                        <code class="errqname">err:XC0025</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the match pattern matches anything
+other than an element node and the value of the position option is
+“first-child” or “last-child”.</p>
+                        <p>See: <a href="#err.inline.C0025" shape="rect">p:insert</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0026" id="err.C0026" shape="rect"/>
+                        <code class="errqname">err:XC0026</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the document does not exist or is not
+well-formed.</p>
+                        <p>See: <a href="#err.inline.C0026" shape="rect">p:load</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0027" id="err.C0027" shape="rect"/>
+                        <code class="errqname">err:XC0027</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the document is not valid or the step
+doesn't support DTD validation.</p>
+                        <p>See: <a href="#err.inline.C0027" shape="rect">p:load</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0028" id="err.C0028" shape="rect"/>
+                        <code class="errqname">err:XC0028</code>
+                    </dt>
+                    <dd>
+                        <p>it is a dynamic error if the content of the c:body element does
+not consist entirely of characters</p>
+                        <p>See: <a href="#err.inline.C0028" shape="rect">Request Entity body
+conversion</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0029" id="err.C0029" shape="rect"/>
+                        <code class="errqname">err:XC0029</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if an XInclude error occurs during
+processing.</p>
+                        <p>See: <a href="#err.inline.C0029" shape="rect">p:xinclude</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0030" id="err.C0030" shape="rect"/>
+                        <code class="errqname">err:XC0030</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the override-content-type value cannot
+be used (e.g. text/plain to override image/png).</p>
+                        <p>See: <a href="#err.inline.C0030" shape="rect">Managing the response</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0033" id="err.C0033" shape="rect"/>
+                        <code class="errqname">err:XC0033</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the command cannot be run.</p>
+                        <p>See: <a href="#err.inline.C0033" shape="rect">p:exec</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0034" id="err.C0034" shape="rect"/>
+                        <code class="errqname">err:XC0034</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the current working directory cannot be
+changed to the value of the cwd option.</p>
+                        <p>See: <a href="#err.inline.C0034" shape="rect">p:exec</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0035" id="err.C0035" shape="rect"/>
+                        <code class="errqname">err:XC0035</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error to specify both result-is-xml and
+wrap-result-lines.</p>
+                        <p>See: <a href="#err.inline.C0035" shape="rect">p:exec</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0036" id="err.C0036" shape="rect"/>
+                        <code class="errqname">err:XC0036</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the requested hash algorithm is not one
+that the processor understands or if the value or parameters are
+not appropriate for that algorithm.</p>
+                        <p>See: <a href="#err.inline.C0036" shape="rect">p:hash</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0037" id="err.C0037" shape="rect"/>
+                        <code class="errqname">err:XC0037</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the value provided is not a properly
+x-www-form-urlencoded value.</p>
+                        <p>See: <a href="#err.inline.C0037" shape="rect">p:www-form-urldecode</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0038" id="err.C0038" shape="rect"/>
+                        <code class="errqname">err:XC0038</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the specified version of XSLT is not
+available.</p>
+                        <p>See: <a href="#err.inline.C0038" shape="rect">p:xslt</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0039" id="err.C0039" shape="rect"/>
+                        <code class="errqname">err:XC0039</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if a sequence of documents is provided to
+an XSLT 1.0 step.</p>
+                        <p>See: <a href="#err.inline.C0039" shape="rect">p:xslt</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0040" id="err.C0040" shape="rect"/>
+                        <code class="errqname">err:XC0040</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the document element of the document
+that arrives on the source port is not c:request.</p>
+                        <p>See: <a href="#err.inline.C0040" shape="rect">p:http-request</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0050" id="err.C0050" shape="rect"/>
+                        <code class="errqname">err:XC0050</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the URI scheme is not supported or the
+step cannot store to the specified location.</p>
+                        <p>See: <a href="#err.inline.C0050" shape="rect">p:store</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0051" id="err.C0051" shape="rect"/>
+                        <code class="errqname">err:XC0051</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the content-type specified is not
+supported by the implementation.</p>
+                        <p>See: <a href="#err.inline.C0051" shape="rect">p:unescape-markup</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0052" id="err.C0052" shape="rect"/>
+                        <code class="errqname">err:XC0052</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the encoding specified is not supported
+by the implementation.</p>
+                        <p>See: <a href="#err.inline.C0052" shape="rect">Request Entity body
+conversion</a>, <a href="#err.inline.C0052.1" shape="rect">p:unescape-markup</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0053" id="err.C0053" shape="rect"/>
+                        <code class="errqname">err:XC0053</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the assert-valid option is true and the
+input document is not valid.</p>
+                        <p>See: <a href="#err.inline.C0053" shape="rect">p:validate-with-relax-ng</a>,
+<a href="#err.inline.C0053.1" shape="rect">p:validate-with-xml-schema</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0054" id="err.C0054" shape="rect"/>
+                        <code class="errqname">err:XC0054</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the assert-valid option is true and any
+Schematron assertions fail.</p>
+                        <p>See: <a href="#err.inline.C0054" shape="rect">p:validate-with-schematron</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0055" id="err.C0055" shape="rect"/>
+                        <code class="errqname">err:XC0055</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the implementation does not support the
+specified mode.</p>
+                        <p>See: <a href="#err.inline.C0055" shape="rect">p:validate-with-xml-schema</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0056" id="err.C0056" shape="rect"/>
+                        <code class="errqname">err:XC0056</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the specified initial mode or named
+template cannot be applied to the specified stylesheet.</p>
+                        <p>See: <a href="#err.inline.C0056" shape="rect">p:xslt</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0057" id="err.C0057" shape="rect"/>
+                        <code class="errqname">err:XC0057</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the sequence that results from
+evaluating the XQuery contains items other than documents and
+elements.</p>
+                        <p>See: <a href="#err.inline.C0057" shape="rect">p:xquery</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0058" id="err.C0058" shape="rect"/>
+                        <code class="errqname">err:XC0058</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the all and relative options are both
+true.</p>
+                        <p>See: <a href="#err.inline.C0058" shape="rect">p:add-xml-base</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0059" id="err.C0059" shape="rect"/>
+                        <code class="errqname">err:XC0059</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the QName value in the attribute-name
+option uses the prefix 'xmlns' or any other prefix that resolves to
+the same namespace name as 'xmlns'.</p>
+                        <p>See: <a href="#err.inline.C0059" shape="rect">p:add-attribute</a>
+                        </p>
+                    </dd>
+                    <dt>
+                        <a name="err.C0060" id="err.C0060" shape="rect"/>
+                        <code class="errqname">err:XC0060</code>
+                    </dt>
+                    <dd>
+                        <p>It is a dynamic error if the processor does not support the
+specified version of the UUID algorithm.</p>
+                        <p>See: <a href="#err.inline.C0060" shape="rect">p:uuid</a>
+                        </p>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </body>
+</html>

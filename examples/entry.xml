@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+	<title>Atom-Powered Robots Run Amok</title>
+	<content type="application/xml">
+		<Programme xmlns="http://infax.bbc.co.uk/ns/0.1/" id="00 CF07" magazinePrefix="">
+			<ArchivalInterest>false</ArchivalInterest>
+			<Producer>Unknown</Producer>
+			<Editor></Editor>
+			<SeriesTitle>Harold Wilson</SeriesTitle>
+			<CoreTitle></CoreTitle>
+			<Transmissions network="1" regional="0">
+				<Transmission xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="transmissions/2980321/data.xml">2980321</Transmission>
+			</Transmissions>
+			<Restriction></Restriction>
+			<Origin></Origin>
+			<OriginIndicator>Wholly BBC</OriginIndicator>
+			<CentralScriptLibrary></CentralScriptLibrary>
+			<Media>Radio</Media>
+			<Radio number="CF0007">
+				<Type>
+					<MasterTapeNumber>MSX05/CF0007</MasterTapeNumber>
+					<WheterTransmissionTapeExpected>false</WheterTransmissionTapeExpected>
+				</Type>
+				<CatalogueInformation>
+					<DepartmentCode>RWA</DepartmentCode>
+					<TelephonNumberOfContact></TelephonNumberOfContact>
+					<NumberOfReels>1</NumberOfReels>
+					<InsertType>N</InsertType>
+					<SoundArchiveNumber>-1</SoundArchiveNumber>
+					<ArchivedIndicator>false</ArchivedIndicator>
+					<DateArchived>1900-01-01</DateArchived>
+				</CatalogueInformation>
+				<Time>
+					<StartStudioSession>1967-02-03T00:00:00</StartStudioSession>
+					<FinishStudioSession>1967-02-03T00:00:00</FinishStudioSession>
+				</Time>
+				<StudioName>BRANGWYN HALL S</StudioName>
+				<RecordChannel></RecordChannel>
+				<RegionalLibraryCode>SX</RegionalLibraryCode>
+			</Radio>
+			<RegionalScriptType></RegionalScriptType>
+			<Cataloguer></Cataloguer>
+			<Note></Note>
+			<CatalogueInformation>
+				<Adder date="1998-10-04T12:40:00">ECHO</Adder>
+				<LastChanger date="2008-01-14T11:32:00">GUYA02</LastChanger>
+			</CatalogueInformation>
+			<FirstRecording precision="E" date="1967-02-03" />
+			<FirstTransmission>
+				<Id xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="transmissions/2980321/data.xml">2980321</Id>
+				<Date precision="E" network="true">2000-01-01</Date>
+			</FirstTransmission>
+		</Programme>
+	</content>
+</entry>
