@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<html	xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="author" content="" />
+    <meta name="CVS-Id" content="$Id: $" />
+    <title>XProc Error Codes</title>
+  </head>
+  <body>
+  	<xi:include href="http://www.w3.org/TR/xproc/" xpointer="//node()[@id = 'app.static-errors']/ancestor::*[@class = 'section'][1]" parse="xml">
+  		<xi:fallback><p>app.static-errors not found</p></xi:fallback>
+  	</xi:include>
+  	<xi:include href="http://www.w3.org/TR/xproc/" xpointer="//node()[@id = 'app.dynamic-errors']/ancestor::*[@class = 'section'][1]" parse="xml">
+  		<xi:fallback><p>app.dynamic-errors not found</p></xi:fallback>
+  	</xi:include>
+  	<xi:include href="http://www.w3.org/TR/xproc/" xpointer="//node()[@id = 'app.step-errors']/ancestor::*[@class = 'section'][1]" parse="xml">
+  		<xi:fallback><p>app.step-errors not found</p></xi:fallback>
+  	</xi:include>
+  </body>
+</html>

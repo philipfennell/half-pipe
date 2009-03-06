@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom">
+	<workspace>
+		<atom:title type="text">test</atom:title>
+		<collection href="test/performance/">
+			<atom:title type="text">performance</atom:title>
+			<accept>application/atom+xml;type=entry</accept>
+			<categories/>
+		</collection>
+	</workspace>
+	<workspace>
+		<atom:title type="text">infax</atom:title>
+	</workspace>
+</service>
