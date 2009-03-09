@@ -115,7 +115,7 @@
 	
 	
 	<!--  -->
-	<xsl:template match="xproc:add-attribute | xproc:add-xml-base | xproc:count | xproc:delete | hp:error | xproc:filter | xproc:for-each | xproc:identity | xproc:insert | xproc:label-elements | xproc:load | xproc:make-absolute-uris | xproc:namespace-rename | xproc:pack | xproc:rename | xproc:replace | xproc:store | xproc:string-replace | xproc:unwrap | xproc:wrap | xproc:wrap-sequence | xproc:xinclude | xproc:xslt" mode="xproc:expand">
+	<xsl:template match="xproc:add-attribute | xproc:add-xml-base | xproc:count | xproc:delete | hp:error | xproc:filter | xproc:for-each | xproc:identity | xproc:insert | xproc:label-elements | xproc:load | xproc:log | xproc:make-absolute-uris | xproc:namespace-rename | xproc:pack | xproc:rename | xproc:replace | xproc:store | xproc:string-replace | xproc:unwrap | xproc:wrap | xproc:wrap-sequence | xproc:xinclude | xproc:xslt" mode="xproc:expand">
 		<xsl:copy>
 			<xsl:attribute name="name" select="generate-id()"/>
 			<xsl:copy-of select="@*"/>
@@ -182,6 +182,7 @@
 				 XSLT will control the final serialization.-->
 			<xsl:apply-templates select="/*/xproc:serialization" mode="xproc:serialize"/>
 			
+			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="xproc:log"/>
 			<XSLT:strip-space elements="*"/>
 			
 			<!-- Start compiling the pipeline. -->
@@ -213,19 +214,30 @@
 	
 	<!-- Creates the root template for the compiled transform. -->
 	<xsl:template match="xproc:pipeline | xproc:declare-step" mode="xproc:compile">
+			
+		<XSLT:variable name="source" select="/" as="document-node()*" hp:input="source"/>
+		
+		<!-- Declare the pipeline steps as global variable so that their output
+			 port can be accessed from any step. -->
+		<xsl:apply-templates select="*" mode="xproc:pipe"/>
+		
 		<XSLT:template match="/">
-			<XSLT:variable name="source" select="root()" hp:input="source"/>
+			<xsl:apply-templates select="xproc:log" mode="xproc:log"/>
 			
-			<!-- Build the pipeline processing sequence. -->
-			<xsl:apply-templates select="*" mode="xproc:pipe"/>
-			
-			<XSLT:copy-of select="${xproc:*[last()]/@name}" hp:output="result"/>
+			<XSLT:sequence select="${xproc:*[last()]/@name}" hp:output="result"/>
 		</XSLT:template>
 		
 		<!-- Build the step processing templates called by the processing sequence above. -->
 		<xsl:apply-templates select="* except(xproc:library, xproc:pipeline)" mode="xproc:step"/>
 	</xsl:template>
 	
+	
+	
+	
+	<!-- Don't create a variable for xproc:log steps, as a temporary tree, the 
+		 xsl:result-document won't work. -->
+	<xsl:template match="xproc:log" mode="xproc:pipe"/>
+		
 	
 	
 	
@@ -353,6 +365,19 @@
 	<!-- Evaluates the XPath expression of the select attribute. -->
 	<xsl:template match="@select" mode="xproc:add-attribute">
 		<XSLT:value-of select="saxon:evaluate('{.}')"/>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Outputs the result of the named port to a URI.
+		 *** Note, this won't work in an implementation where results of  ***
+		 *** a step are stored in variables, as they are temporary trees! ***
+	-->
+	<xsl:template match="xproc:log" mode="xproc:log">
+		<XSLT:result-document hp:port="{@name}" href="{@href}" format="xproc:log">
+			<XSLT:sequence select="${@port}"/>
+		</XSLT:result-document>
 	</xsl:template>
 	
 	
