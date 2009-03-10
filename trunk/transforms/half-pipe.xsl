@@ -183,6 +183,8 @@
 			<xsl:apply-templates select="/*/xproc:serialization" mode="xproc:serialize"/>
 			
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="xproc:log"/>
+			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="hp:debug"/>
+			
 			<XSLT:strip-space elements="*"/>
 			
 			<!-- Start compiling the pipeline. -->
@@ -215,7 +217,18 @@
 	<!-- Creates the root template for the compiled transform. -->
 	<xsl:template match="xproc:pipeline | xproc:declare-step" mode="xproc:compile">
 			
-		<XSLT:variable name="source" select="/" as="document-node()*" hp:input="source"/>
+		<XSLT:variable name="source" as="document-node()" hp:input="source">
+			<XSLT:document>
+				<hp:job-bag>
+					<hp:input port="source">
+						<XSLT:sequence select="/"/>
+					</hp:input>
+					<hp:output port="result">
+						<XSLT:sequence select="/"/>
+					</hp:output>
+				</hp:job-bag>
+			</XSLT:document>
+		</XSLT:variable>
 		
 		<!-- Declare the pipeline steps as global variable so that their output
 			 port can be accessed from any step. -->
@@ -224,8 +237,32 @@
 		<XSLT:template match="/">
 			<xsl:apply-templates select="xproc:log" mode="xproc:log"/>
 			
-			<XSLT:sequence select="${xproc:*[last()]/@name}" hp:output="result"/>
+			<XSLT:apply-templates select="${xproc:*[last()]/@name}" mode="xproc:result" hp:output="result"/>
 		</XSLT:template>
+		
+		<!-- Send the result of the last step to the result of the transform. 
+			 If debug is on then write the final job-bag to the 'debug' directory.-->
+		<XSLT:template match="hp:job-bag" mode="xproc:result">
+			<xsl:if test="$MODE = 'debug'">
+				<XSLT:result-document href="../debug/job-bag.xml" format="hp:debug">
+					<XSLT:sequence select="."/>
+				</XSLT:result-document>
+			</xsl:if>
+			
+			<XSLT:sequence select="hp:output[@port = 'result']/*"/>
+			<XSLT:apply-templates select="*" mode="#current"/>
+		</XSLT:template>
+		
+		<!-- Outputs the result of the named port to a URI. -->
+		<XSLT:template match="hp:job-bag/hp:log" mode="xproc:result">
+			<XSLT:result-document hp:port="{@name}" href="{{@href}}" format="xproc:log">
+				<XSLT:sequence select="*"/>
+			</XSLT:result-document>
+		</XSLT:template>
+		
+		<!-- Ignore text nodes in this mode. -->
+		<XSLT:template match="text()" mode="xproc:result"/>
+		
 		
 		<!-- Build the step processing templates called by the processing sequence above. -->
 		<xsl:apply-templates select="* except(xproc:library, xproc:pipeline)" mode="xproc:step"/>
@@ -234,9 +271,40 @@
 	
 	
 	
+	
+	
+	
+	
+	
 	<!-- Don't create a variable for xproc:log steps, as a temporary tree, the 
 		 xsl:result-document won't work. -->
-	<xsl:template match="xproc:log" mode="xproc:pipe"/>
+	<!--	<xsl:template match="xproc:log" mode="xproc:pipe"/>-->
+	
+	
+	
+	
+	<!-- Creates a variable to hold the results of the p:identity step. -->
+	<xsl:template match="xproc:log" mode="xproc:pipe">
+		<XSLT:variable name="{@name}" as="document-node(){hp:sequenceQualifier(xproc:output)}"
+			hp:step="{name()}">
+			
+			<!-- Implement port selection. -->
+			<xsl:variable name="inputPort" select="'result'"/>
+			
+			<XSLT:document>
+				<hp:job-bag>
+					<hp:input port="source">
+						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
+					</hp:input>
+					<hp:output port="result">
+						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
+					</hp:output>
+					<!-- Insert xproc:log nodes. -->
+					<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+				</hp:job-bag>
+			</XSLT:document>
+		</XSLT:variable>
+	</xsl:template>
 		
 	
 	
@@ -246,8 +314,18 @@
 		<XSLT:variable name="{@name}" as="document-node(){hp:sequenceQualifier(xproc:output)}"
 				hp:step="{name()}">
 			
+			<!-- Implement port selection. -->
+			<xsl:variable name="inputPort" select="'result'"/>
+			
 			<XSLT:document>
-				<XSLT:apply-templates select="$source" mode="{name()}-{@name}"/>
+				<hp:job-bag>
+					<hp:input port="source">
+						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
+					</hp:input>
+					<hp:output port="result">
+						<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+					</hp:output>
+				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
 	</xsl:template>
@@ -328,7 +406,7 @@
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:sequence select="$insertionNodes"/>
-		<xsl:call-template name="hp:deepClone"/>
+		<xsl:call-template name="hp:deepCopy"/>
 	</xsl:template>
 	
 	
@@ -336,7 +414,7 @@
 	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
-		<xsl:call-template name="hp:deepClone"/>
+		<xsl:call-template name="hp:deepCopy"/>
 		<xsl:sequence select="$insertionNodes"/>
 	</xsl:template>
 	
@@ -370,14 +448,13 @@
 	
 	
 	
-	<!-- Outputs the result of the named port to a URI.
-		 *** Note, this won't work in an implementation where results of  ***
-		 *** a step are stored in variables, as they are temporary trees! ***
-	-->
-	<xsl:template match="xproc:log" mode="xproc:log">
-		<XSLT:result-document hp:port="{@name}" href="{@href}" format="xproc:log">
-			<XSLT:sequence select="${@port}"/>
-		</XSLT:result-document>
+	<!--  -->
+	<xsl:template match="xproc:log" mode="xproc:step">
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			<hp:log href="{@href}">
+				<XSLT:copy-of select="." copy-namespaces="no"/>
+			</hp:log>
+		</XSLT:template>
 	</xsl:template>
 	
 	
@@ -415,13 +492,13 @@
 	<!-- Boiler-plate identity transform -->
 	<xsl:template name="hp:identityTransform">
 		<XSLT:template match="*" mode="{name()}-{@name}">
-			<xsl:call-template name="hp:deepClone"/>
+			<xsl:call-template name="hp:deepCopy"/>
 		</XSLT:template>
 	</xsl:template>
 	
 	
 	<!-- Boiler-plate 'deep' node cloning (node, its attributes and descendants). -->
-	<xsl:template name="hp:deepClone">
+	<xsl:template name="hp:deepCopy">
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
 			<XSLT:apply-templates select="*|text()" mode="#current"/>
@@ -431,11 +508,13 @@
 	
 	
 	
-	<!-- Returns a sequence of supported XProc step. -->
-	<xsl:function name="hp:precedingStep" as="element()*">
+	<!-- Returns the name of the preceding step (in document order) or 'source' 
+		 if there are no preceding steps.. -->
+	<xsl:function name="hp:precedingStepName" as="xs:string">
 		<xsl:param name="contextNode" as="element()"/>
+		<xsl:variable name="precedingStep" select="$contextNode/preceding-sibling::xproc:*[@hp:step][1]"/>
 		
-		<xsl:sequence select="$contextNode/preceding-sibling::xproc:*[@hp:step][1]"/>
+		<xsl:sequence select="if ($precedingStep) then $precedingStep/@name else 'source'"/>
 	</xsl:function>
 	
 	
