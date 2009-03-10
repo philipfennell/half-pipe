@@ -301,6 +301,7 @@
 					</hp:output>
 					<!-- Insert xproc:log nodes. -->
 					<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+					<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:log"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
@@ -325,6 +326,7 @@
 					<hp:output port="result">
 						<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
 					</hp:output>
+					<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:log"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
