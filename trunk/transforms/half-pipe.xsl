@@ -11,6 +11,9 @@
 		exclude-result-prefixes="saxon xhtml xproc xsl"
 		version="2.0">
 	
+	<xsl:import href="xproc-parser.xsl"/>
+	<xsl:include href="xproc-common.xsl"/>
+	
 	<xsl:output method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 			saxon:indent-spaces="4"/>
 	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
@@ -42,22 +45,22 @@
 	<!--  -->
 	<xsl:template match="/">
 		<!-- Expand the pipeline to its full canonical form. -->
-		<xsl:variable name="expandedPipeline" as="document-node()">
+		<xsl:variable name="parsedPipeline" as="document-node()">
 			<xsl:document>
-				<xsl:apply-templates select="*" mode="xproc:expand"/>
+				<xsl:apply-templates select="*" mode="xproc:parse"/>
 			</xsl:document>
 		</xsl:variable>
 		
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../debug/expandedPipeline.xml">
-				<xsl:copy-of select="$expandedPipeline"/>
+				<xsl:copy-of select="$parsedPipeline"/>
 			</xsl:result-document>
 		</xsl:if>
 		
 		<!-- Compile the expanded pipeline into an executable transform. -->
 		<xsl:variable name="compiledPipeline" as="document-node()">
 			<xsl:document>
-				<xsl:apply-templates select="$expandedPipeline" mode="xproc:compile"/>
+				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
 			</xsl:document>
 		</xsl:variable>
 		
@@ -67,7 +70,6 @@
 			</xsl:result-document>
 		</xsl:if>
 		
-		
 		<xsl:copy-of select="$compiledPipeline"/>
 	</xsl:template>
 	
@@ -76,87 +78,7 @@
 	
 	
 	
-	<!-- === Pipeline Expansion (xproc:expand). ============================ -->
 	
-	<!--  -->
-	<xsl:template match="/xproc:pipeline|/xproc:declare-step" mode="xproc:expand">
-		<xsl:copy>
-			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
-			<xsl:namespace name="saxon" select="'http://saxon.sf.net/'"/>
-			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
-			<xsl:namespace name="xsl" select="'http://www.w3.org/1999/XSL/Transform'"/>
-			
-			<xsl:copy-of select="@*"/>
-			
-			<xsl:apply-templates select="*" mode="#current">
-				<xsl:with-param name="baseURI" select="if (@xml:base) then resolve-uri(@xml:base, base-uri(root())) else base-uri(root())" as="xs:anyURI?" tunnel="yes"/>
-			</xsl:apply-templates>
-		</xsl:copy>
-	</xsl:template>
-	
-	
-	
-	
-	<!--  -->
-	<xsl:template match="xproc:import" mode="xproc:expand">
-		<xsl:param name="baseURI" as="xs:anyURI?" tunnel="yes"/>
-		<xsl:variable name="resourceURI" select="resolve-uri(@href, $baseURI)" as="xs:anyURI"/>
-		
-		<xsl:apply-templates select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XS0052', $resourceURI)" mode="#current"/>
-	</xsl:template>
-	
-	
-	
-	
-	<!-- Ignore documentation. -->
-	<xsl:template match="xproc:documentation" mode="xproc:expand"/>
-	
-	
-	
-	
-	<!--  -->
-	<xsl:template match="xproc:add-attribute | xproc:add-xml-base | xproc:count | xproc:delete | hp:error | xproc:filter | xproc:for-each | xproc:identity | xproc:insert | xproc:label-elements | xproc:load | xproc:log | xproc:make-absolute-uris | xproc:namespace-rename | xproc:pack | xproc:rename | xproc:replace | xproc:store | xproc:string-replace | xproc:unwrap | xproc:wrap | xproc:wrap-sequence | xproc:xinclude | xproc:xslt" mode="xproc:expand">
-		<xsl:copy>
-			<xsl:attribute name="name" select="generate-id()"/>
-			<xsl:copy-of select="@*"/>
-			<xsl:attribute name="hp:step" select="'true'"/>
-			
-			<!--<xsl:if test="not(xproc:input[@port = 'source'])">
-				<p:input port="source">
-					<p:pipe port="result" step="{(preceding-sibling::xproc:*[1]/@name, generate-id(preceding-sibling::xproc:*[1]))[1]}"/>
-				</p:input>
-			</xsl:if>-->
-			
-			<xsl:apply-templates select="xproc:* | text()" mode="#current"/>
-		</xsl:copy>
-	</xsl:template>
-	
-	
-	
-	
-	<!-- Replicate XProc elements, attributes and the elements descendants. -->
-	<xsl:template match="xproc:*" mode="xproc:expand">
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates select="* | text()" mode="#current"/>
-		</xsl:copy>
-	</xsl:template>
-	
-	
-	
-	
-	<!-- Replicate attributes. -->
-	<!--<xsl:template match="attribute()" mode="xproc:expand">
-		<xsl:copy-of select="."/>
-	</xsl:template>-->
-	
-	
-	
-	
-	<!-- Ignore any elements not in the XProc namespace. -->
-	<xsl:template match="*" mode="xproc:expand">
-		<xsl:copy-of select="."/>
-	</xsl:template>
 	
 	
 	
@@ -526,29 +448,6 @@
 	<xsl:function name="hp:sequenceQualifier" as="xs:string">
 		<xsl:param name="outputElement" as="element()?"/>
 		<xsl:value-of select="if ($outputElement/@sequence = 'true') then '*' else '?'"/>
-	</xsl:function>
-	
-	
-	
-	
-	<!-- Displays the error message for the passed error code on stdout and terminates the transformation. -->
-	<xsl:function name="hp:error">
-		<xsl:param name="errorCode" as="xs:string"/>
-		<xsl:param name="arg" as="xs:string"/>
-		
-		<xsl:message terminate="yes">[XProc][<xsl:value-of select="$errorCode"/>][FATAL] <xsl:value-of select="$arg"/> - <xsl:value-of select="hp:getErrorMessage($errorCode)"/></xsl:message>
-	</xsl:function>
-	
-	
-	
-	
-	<!-- Returns the error message text for the passed error code. -->
-	<xsl:function name="hp:getErrorMessage" as="xs:string">
-		<xsl:param name="errorCode" as="xs:string"/>
-		<xsl:variable name="errorCodesURI" select="'../docs/error-codes.xml'"/>
-		<xsl:variable name="errorCodesDoc" select="if (doc-available($errorCodesURI)) then doc($errorCodesURI) else ()" as="document-node()?"/>
-		
-		<xsl:value-of select="$errorCodesDoc//xhtml:dt[xhtml:code = $errorCode]/following-sibling::xhtml:dd[1]/xhtml:p[1]"/>
 	</xsl:function>
 	
 </xsl:transform>
