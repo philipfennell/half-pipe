@@ -21,6 +21,11 @@ Things to do
 		+	Write test pipelines
 		*	Write test Schematron schemata
 		*	Write XProc pipeline to execute/validate tests.
+		
+	Looking at the XProc test suite at: <http://tests.xproc.org/>. The list of 
+	required tests is at: <http://tests.xproc.org/tests/required/test-suite.xml>
+	
+	
 
 
 
