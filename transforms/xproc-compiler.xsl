@@ -95,6 +95,8 @@
 		<XSLT:transform version="2.0">
 			<xsl:variable name="contextNode" select="*"/>
 			
+			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
+			
 			<!-- Add namespace declarations from the source pipeline. -->
 			<xsl:for-each select="in-scope-prefixes(*)">
 				<xsl:namespace name="{.}" select="namespace-uri-for-prefix(., $contextNode)"/>
@@ -108,6 +110,7 @@
 				 XSLT will control the final serialization.-->
 			<xsl:apply-templates select="/*/xproc:serialization" mode="xproc:serialize"/>
 			
+			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml"/>
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="xproc:log"/>
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="hp:debug"/>
 			
@@ -294,31 +297,31 @@
 		 according to the position declaration. -->
 	<xsl:template match="xproc:insert" mode="xproc:step" priority="2">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}">
-			<xsl:next-match>
+			<xsl:apply-templates select="." mode="xproc:insert">
 				<xsl:with-param name="insertionNodes" as="element()*">
-					<xsl:apply-templates select="p:input[@port = 'insertion']/*" mode="xproc:insert"/>
+					<xsl:apply-templates select="p:input[@port = 'insertion']/*" mode="xproc:input"/>
 				</xsl:with-param>
-			</xsl:next-match>
+			</xsl:apply-templates>
 		</XSLT:template>
 		<xsl:call-template name="hp:identityTransform"/>
 	</xsl:template>
 	
 	
 	<!-- Extracts content from an in-line document declaration. -->
-	<xsl:template match="p:input[@port = 'insertion']/p:inline" mode="xproc:insert">
+	<xsl:template match="p:input[@port = 'insertion']/p:inline" mode="xproc:input">
 		<xsl:copy-of select="*"/>
 	</xsl:template>
 	
 	
 	<!-- Extracts content from an external document declaration. -->
-	<xsl:template match="p:input[@port = 'insertion']/p:document" mode="xproc:insert">
+	<xsl:template match="p:input[@port = 'insertion']/p:document" mode="xproc:input">
 		<xsl:variable name="resourceURI" select="resolve-uri(@href)"/>
 		<xsl:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
 	</xsl:template>
 	
 	
 	<!-- Insert as the 'first child' of matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'first-child']" mode="xproc:step">
+	<xsl:template match="xproc:insert[@position = 'first-child']" mode="xproc:insert">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<XSLT:copy copy-namespaces="no">
@@ -330,7 +333,7 @@
 	
 	
 	<!-- Insert as the 'last child' of matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'last-child']" mode="xproc:step">
+	<xsl:template match="xproc:insert[@position = 'last-child']" mode="xproc:insert">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<XSLT:copy copy-namespaces="no">
@@ -342,7 +345,7 @@
 	
 	
 	<!-- Insert 'before' matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:step">
+	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:insert">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:sequence select="$insertionNodes"/>
@@ -351,7 +354,7 @@
 	
 	
 	<!-- Insert 'after' matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:step">
+	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:insert">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:call-template name="hp:deepCopy"/>
