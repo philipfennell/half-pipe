@@ -27,16 +27,32 @@
 			<dcterms:creator>Philip A. R. Fennell</dcterms:creator>
 			<dcterms:hasVersion>$Revision: $</dcterms:hasVersion>
 			<dcterms:dateSubmitted>$Date: $</dcterms:dateSubmitted>
-			<dcterms:format>text/xsl</dcterms:format>
-			<dcterms:title>Half-pipe XProc Parser</dcterms:title>
-			<dcterms:description>Pipeline Parser (xproc:parse).</dcterms:description>
+			<dcterms:format>application/xslt+xml</dcterms:format>
+			<dcterms:title>XProc Parser</dcterms:title>
+			<dcterms:description>XProc Pipeline Parser.</dcterms:description>
 		</rdf:Description>
 	</rdf:RDF>
 	
 	<xsl:strip-space elements="*"/>
 	
 	
-	<xsl:template match="/" >
+	
+	
+	<!-- Returns the parsed version of the passed XProc pipeline document. -->
+	<xsl:function name="xproc:parse" as="document-node()">
+		<xsl:param name="pipelineDoc" as="document-node()"/>
+		<!-- Might want a mode parameter. -->
+		
+		<xsl:document>
+			<xsl:apply-templates select="$pipelineDoc" mode="xproc:parse"/>
+		</xsl:document>
+	</xsl:function>
+	
+	
+	
+	
+	<!-- Generates the parsed version of the source XProc pipeline document. -->
+	<xsl:template match="/">
 		<xsl:apply-templates select="*" mode="xproc:parse"/>
 	</xsl:template>
 	
@@ -114,4 +130,5 @@
 	<xsl:template match="*" mode="xproc:parse">
 		<xsl:copy-of select="."/>
 	</xsl:template>
+	
 </xsl:transform>

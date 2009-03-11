@@ -24,7 +24,7 @@
 			<dcterms:creator>Philip A. R. Fennell</dcterms:creator>
 			<dcterms:hasVersion>$Revision: $</dcterms:hasVersion>
 			<dcterms:dateSubmitted>$Date: $</dcterms:dateSubmitted>
-			<dcterms:format>text/xsl</dcterms:format>
+			<dcterms:format>application/xslt+xml</dcterms:format>
 			<dcterms:title>Half-pipe Utility functions and templates</dcterms:title>
 			<dcterms:description>Pipeline functions and templates common to the parser, compiler and processor.</dcterms:description>
 		</rdf:Description>
