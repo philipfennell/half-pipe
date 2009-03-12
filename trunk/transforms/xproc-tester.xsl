@@ -46,24 +46,14 @@
 	
 	<xsl:template match="/">
 		<!-- Expand the pipeline to its full canonical form. -->
-		<xsl:variable name="parsedPipeline" as="document-node()">
+		<xsl:variable name="pipelineDoc" as="document-node()">
 			<xsl:document>
-				<xsl:apply-templates select="t:test/t:pipeline/*" mode="xproc:parse"/>
+				<xsl:copy-of select="t:test/t:pipeline/*"/>
 			</xsl:document>
 		</xsl:variable>
-		
-		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/expandedPipeline.xml">
-				<xsl:copy-of select="$parsedPipeline"/>
-			</xsl:result-document>
-		</xsl:if>
 		
 		<!-- Compile the expanded pipeline into an executable transform. -->
-		<xsl:variable name="compiledPipeline" as="document-node()">
-			<xsl:document>
-				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
-			</xsl:document>
-		</xsl:variable>
+		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
 		
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
