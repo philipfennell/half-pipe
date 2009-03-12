@@ -43,11 +43,13 @@
 	
 	
 	<!-- Returns the compiled version of the passed XProc pipeline document. -->
-	<xsl:function name="xproc:compile" as="element()">
+	<xsl:function name="xproc:compile" as="document-node()">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
 		<!-- Might want a mode parameter. -->
 		
-		<xsl:apply-templates select="xproc:parse($pipelineDoc)" mode="xproc:compile"/>
+		<xsl:document>
+			<xsl:apply-templates select="xproc:parse($pipelineDoc)" mode="xproc:compile"/>
+		</xsl:document>
 	</xsl:function>
 	
 	
@@ -58,7 +60,7 @@
 		<!-- Expand the pipeline to its full canonical form. -->
 		<xsl:variable name="parsedPipeline" as="document-node()">
 			<xsl:document>
-				<xsl:apply-templates select="*" mode="xproc:parse"/>
+				<xsl:apply-templates select="/" mode="xproc:parse"/>
 			</xsl:document>
 		</xsl:variable>
 		
@@ -103,14 +105,18 @@
 			</xsl:for-each>
 			
 			<!-- Ensure only the necessary namespace prefixes appear in the result. -->
-			<xsl:attribute name="exclude-result-prefixes" select="in-scope-prefixes(*)"/>
+			<xsl:attribute name="exclude-result-prefixes" select="(in-scope-prefixes(*), 'xsl')"/>
+			
+			<xsl:attribute name="xml:base" select="hp:baseURI(.)"/>
+			
+			<!-- Include common functions and templates. -->
+			<XSLT:import href="../transforms/xproc-common.xsl"/>
 			
 			<!-- Process the serialization definition.
 				 Note: this problem wont help much in this context as the host 
 				 XSLT will control the final serialization.-->
 			<xsl:apply-templates select="/*/xproc:serialization" mode="xproc:serialize"/>
 			
-			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml"/>
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="xproc:log"/>
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="hp:debug"/>
 			
@@ -208,45 +214,6 @@
 		<!-- Build the step processing templates called by the processing sequence above. -->
 		<xsl:apply-templates select="* except(xproc:library, xproc:pipeline)" mode="xproc:step"/>
 	</xsl:template>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<!-- Don't create a variable for xproc:log steps, as a temporary tree, the 
-		 xsl:result-document won't work. -->
-	<!--	<xsl:template match="xproc:log" mode="xproc:pipe"/>-->
-	
-	
-	
-	
-	<!-- Creates a variable to hold the results of the p:identity step. -->
-	<xsl:template match="xproc:log" mode="xproc:pipe">
-		<XSLT:variable name="{@name}" as="document-node(){hp:sequenceQualifier(xproc:output)}"
-			hp:step="{name()}">
-			
-			<!-- Implement port selection. -->
-			<xsl:variable name="inputPort" select="'result'"/>
-			
-			<XSLT:document>
-				<hp:job-bag>
-					<hp:input port="source">
-						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
-					</hp:input>
-					<hp:output port="result">
-						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
-					</hp:output>
-					<!-- Insert xproc:log nodes. -->
-					<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
-					<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:log"/>
-				</hp:job-bag>
-			</XSLT:document>
-		</XSLT:variable>
-	</xsl:template>
 		
 	
 	
@@ -260,17 +227,95 @@
 			<xsl:variable name="inputPort" select="'result'"/>
 			
 			<XSLT:document>
+				<XSLT:variable name="input-source" as="document-node(){hp:sequenceQualifier(xproc:input)}">
+					<XSLT:document>
+						<xsl:apply-templates select="xproc:input" mode="xproc:pipe-input"/>
+					</XSLT:document>
+				</XSLT:variable>
 				<hp:job-bag>
 					<hp:input port="source">
-						<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*"/>
+						<XSLT:sequence select="input-source"/>
 					</hp:input>
 					<hp:output port="result">
-						<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+						<XSLT:apply-templates select="$input-source" mode="{name()}-{@name}"/>
 					</hp:output>
+					
+					<!-- Insert xproc:log nodes, if required. -->
+					<xsl:if test="local-name() = 'log'">
+						<XSLT:apply-templates select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+					</xsl:if>
+					
+					<!-- Copy los from the preceding step. -->
 					<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:log"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Generate input port(s) that definine inline, document or pipe sources. -->
+	<xsl:template match="xproc:input[*]" mode="xproc:pipe-input">
+		<xsl:apply-templates select="*" mode="#current"/>
+	</xsl:template>
+	
+	
+	<!-- No content for the port. -->
+	<xsl:template match="xproc:empty" mode="xproc:pipe-input"/>
+	
+	
+	<!-- Copy the in-line content. -->
+	<xsl:template match="xproc:inline" mode="xproc:pipe-input">
+		<xsl:copy-of select="*"/>
+	</xsl:template>
+	
+	
+	<!-- Generate code to retrieve the referenced XML document at run-time. -->
+	<xsl:template match="xproc:document" mode="xproc:pipe-input">
+		<XSLT:variable name="resourceURI" select="resolve-uri(xs:anyURI('{@href}'))" as="xs:anyURI"/>
+		<XSLT:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
+	</xsl:template>
+	
+	
+	<!-- Generate code to retrieve the referenced XML document at run-time. -->
+	<xsl:template match="xproc:data" mode="xproc:pipe-input">
+		<XSLT:variable name="resourceURI" select="resolve-uri(xs:anyURI('{@href}'))" as="xs:anyURI"/>
+		<XSLT:element name="{(@wrapper, 'c:data')[1]}">
+			<XSLT:copy-of select="if (unparsed-text-available($resourceURI)) then unparsed-text($resourceURI) else hp:error('err:XD0029', $resourceURI)"/>	
+		</XSLT:element>
+	</xsl:template>
+	
+	
+	<!-- Generate code to embed content from the result port of the previous step. -->
+	<xsl:template match="xproc:pipe" mode="xproc:pipe-input">
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = '{@port}']/*"/>
+	</xsl:template>
+	
+	
+	<!-- Generate code to embed content from the result port of the previous step. -->
+	<xsl:template match="xproc:input" mode="xproc:pipe-input">
+		<XSLT:sequence select="${hp:precedingStepName(current())}/hp:job-bag/hp:output[@port = 'result']/*"/>
+	</xsl:template>
+	
+	
+	
+	
+	
+	
+	<!-- === Pipeline Steps. =============================================== -->
+	
+	
+	<!-- Extracts content from an in-line document declaration. -->
+	<xsl:template match="p:input/p:inline" mode="xproc:input">
+		<xsl:copy-of select="*"/>
+	</xsl:template>
+	
+	
+	<!-- Extracts content from an external document declaration. -->
+	<xsl:template match="p:input/p:document" mode="xproc:input">
+		<xsl:variable name="resourceURI" select="resolve-uri(@href)"/>
+		<xsl:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
 	</xsl:template>
 	
 	
@@ -304,19 +349,6 @@
 			</xsl:apply-templates>
 		</XSLT:template>
 		<xsl:call-template name="hp:identityTransform"/>
-	</xsl:template>
-	
-	
-	<!-- Extracts content from an in-line document declaration. -->
-	<xsl:template match="p:input[@port = 'insertion']/p:inline" mode="xproc:input">
-		<xsl:copy-of select="*"/>
-	</xsl:template>
-	
-	
-	<!-- Extracts content from an external document declaration. -->
-	<xsl:template match="p:input[@port = 'insertion']/p:document" mode="xproc:input">
-		<xsl:variable name="resourceURI" select="resolve-uri(@href)"/>
-		<xsl:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
 	</xsl:template>
 	
 	
@@ -369,8 +401,9 @@
 		<XSLT:template match="{@match}" mode="{name()}-{@name}">
 			<XSLT:copy copy-namespaces="no">
 				<XSLT:copy-of select="@*"/>
-				<XSLT:attribute name="{@attribute-name}">
-					<xsl:apply-templates select="(@attribute-value, p:with-option[@name = 'attribute-value']/@select)[1]" mode="xproc:add-attribute"/>
+				<XSLT:attribute>
+					<xsl:apply-templates select="(@attribute-value, p:with-option[@name = 'attribute-value'])[1]" mode="xproc:add-attribute"/>
+					<xsl:apply-templates select="(@attribute-name, p:with-option[@name = 'attribute-name'])[1]" mode="xproc:add-attribute"/>
 				</XSLT:attribute>
 				<XSLT:apply-templates select="*|text()" mode="#current"/>
 			</XSLT:copy>
@@ -378,15 +411,34 @@
 		<xsl:call-template name="hp:identityTransform"/>
 	</xsl:template>
 	
-	<!-- Takes the value of the 'attribute-value' attribute. -->
+	<!-- Takes the value of the 'attribute-value' or 'attribute-name' attribute. -->
+	<xsl:template match="@attribute-name" mode="xproc:add-attribute">
+		<xsl:attribute name="name" select="."/>
+	</xsl:template>
+	
+	<!-- Takes the value of the 'attribute-value' or 'attribute-name' attribute. -->
 	<xsl:template match="@attribute-value" mode="xproc:add-attribute">
 		<xsl:attribute name="select" select="concat('''', ., '''')"/>
 	</xsl:template>
 	
 	<!-- Evaluates the XPath expression of the select attribute. -->
-	<xsl:template match="@select" mode="xproc:add-attribute">
-		<XSLT:value-of select="saxon:evaluate('{.}')"/>
+	<xsl:template match="p:with-option[@name = 'attribute-value']" mode="xproc:add-attribute">
+		<XSLT:value-of select="saxon:evaluate('{@select}')"/>
 	</xsl:template>
+	
+	<!-- Evaluates the XPath expression of the select attribute. -->
+	<xsl:template match="p:with-option[@name = 'attribute-name']" mode="xproc:add-attribute">
+		<xsl:variable name="attributeName" select="saxon:evaluate(@select)" as="xs:string"/>
+		<xsl:variable name="namespacePrefix" select="substring-before($attributeName, ':')" as="xs:string?"/>
+		<xsl:attribute name="name" select="$attributeName"/>
+		<xsl:if test="$namespacePrefix">
+			<xsl:attribute name="namespace" select="namespace-uri-for-prefix($namespacePrefix, ..)"/>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="text()" mode="xproc:add-attribute"/>
+		
+	
 	
 	
 	
@@ -419,54 +471,13 @@
 	
 	
 	
+	<!-- Ignore serialization elements in these modes. -->
 	<xsl:template match="xproc:serialization" mode="xproc:compile xproc:pipe xproc:step"/>
+	
+	
 	
 	
 	<!-- Ignore library elements in these modes. -->
 	<xsl:template match="xproc:library" mode="xproc:pipe xproc:step"/>
-		
-	
-	
-	
-	
-	
-	<!-- === Pipeline Utility Functions/Templates. ========================= -->
-	
-	<!-- Boiler-plate identity transform -->
-	<xsl:template name="hp:identityTransform">
-		<XSLT:template match="*" mode="{name()}-{@name}">
-			<xsl:call-template name="hp:deepCopy"/>
-		</XSLT:template>
-	</xsl:template>
-	
-	
-	<!-- Boiler-plate 'deep' node cloning (node, its attributes and descendants). -->
-	<xsl:template name="hp:deepCopy">
-		<XSLT:copy copy-namespaces="no">
-			<XSLT:copy-of select="@*"/>
-			<XSLT:apply-templates select="*|text()" mode="#current"/>
-		</XSLT:copy>
-	</xsl:template>
-	
-	
-	
-	
-	<!-- Returns the name of the preceding step (in document order) or 'source' 
-		 if there are no preceding steps.. -->
-	<xsl:function name="hp:precedingStepName" as="xs:string">
-		<xsl:param name="contextNode" as="element()"/>
-		<xsl:variable name="precedingStep" select="$contextNode/preceding-sibling::xproc:*[@hp:step][1]"/>
-		
-		<xsl:sequence select="if ($precedingStep) then $precedingStep/@name else 'source'"/>
-	</xsl:function>
-	
-	
-	
-	
-	<!-- Returns '*' for sequence = true, otherwise '?'. -->
-	<xsl:function name="hp:sequenceQualifier" as="xs:string">
-		<xsl:param name="outputElement" as="element()?"/>
-		<xsl:value-of select="if ($outputElement/@sequence = 'true') then '*' else '?'"/>
-	</xsl:function>
 	
 </xsl:transform>
