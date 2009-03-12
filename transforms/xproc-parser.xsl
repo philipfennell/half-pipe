@@ -8,7 +8,7 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:XSLT="http://www.w3.org/1999/XSL/Transform/output"
-	exclude-result-prefixes="saxon xhtml xproc xsl"
+	exclude-result-prefixes="saxon xhtml xproc xsl XSLT"
 	version="2.0">
 	
 	<xsl:include href="xproc-common.xsl"/>
@@ -43,8 +43,13 @@
 		<xsl:param name="pipelineDoc" as="document-node()"/>
 		<!-- Might want a mode parameter. -->
 		
+		<xsl:variable name="parse1" as="document-node()">
+			<xsl:document>
+				<xsl:apply-templates select="$pipelineDoc" mode="xproc:parse1"/>
+			</xsl:document>
+		</xsl:variable>
 		<xsl:document>
-			<xsl:apply-templates select="$pipelineDoc" mode="xproc:parse"/>
+			<xsl:apply-templates select="$parse1" mode="xproc:parse"/>
 		</xsl:document>
 	</xsl:function>
 	
@@ -52,15 +57,49 @@
 	
 	
 	<!-- Generates the parsed version of the source XProc pipeline document. -->
-	<xsl:template match="/">
-		<xsl:apply-templates select="*" mode="xproc:parse"/>
+	<xsl:template match="/" mode="#default xproc:parse">
+		<xsl:variable name="parse1" as="element()">
+			<xsl:apply-templates select="*" mode="xproc:parse1"/>
+		</xsl:variable>
+		<xsl:apply-templates select="$parse1" mode="xproc:parse2"/>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Replicate the non-step elements without adding names. -->
+	<xsl:template match="p:data | p:document | p:documentation | p:empty | 
+						 p:import | p:inline | xproc:input | 
+						 p:iteration-source | p:library | p:log | p:option | 
+						 xproc:output | p:pipe | p:pipeinfo | 
+						 xproc:serialization | p:variable | p:viewport-source | 
+						 p:with-option | p:with-param" 
+				mode="xproc:parse1">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="* | text()" mode="#current"/>
+		</xsl:copy>
+	</xsl:template>
+		
+	
+	
+	
+	<!-- Add name attribute (with generated name) and a 'step' tag. -->
+	<xsl:template match="xproc:*" mode="xproc:parse1">
+		<xsl:copy>
+			<xsl:attribute name="name" select="generate-id()"/>
+			<xsl:copy-of select="@*"/>
+			<xsl:attribute name="hp:step" select="'true'"/>
+			
+			<xsl:apply-templates select="* | text()" mode="#current"/>
+		</xsl:copy>
 	</xsl:template>
 	
 	
 	
 	
 	<!--  -->
-	<xsl:template match="/xproc:pipeline|/xproc:declare-step" mode="xproc:parse">
+	<xsl:template match="/xproc:pipeline|/xproc:declare-step" mode="xproc:parse1">
 		<xsl:copy>
 			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
 			<xsl:namespace name="saxon" select="'http://saxon.sf.net/'"/>
@@ -79,7 +118,7 @@
 	
 	
 	<!--  -->
-	<xsl:template match="xproc:import" mode="xproc:parse">
+	<xsl:template match="xproc:import" mode="xproc:parse1">
 		<xsl:param name="baseURI" as="xs:anyURI?" tunnel="yes"/>
 		<xsl:variable name="resourceURI" select="resolve-uri(@href, $baseURI)" as="xs:anyURI"/>
 		
@@ -90,25 +129,33 @@
 	
 	
 	<!-- Ignore documentation. -->
-	<xsl:template match="xproc:documentation" mode="xproc:parse"/>
+	<xsl:template match="xproc:documentation" mode="xproc:parse2"/>
 	
 	
 	
 	
 	<!--  -->
-	<xsl:template match="xproc:add-attribute | xproc:add-xml-base | xproc:count | xproc:delete | hp:error | xproc:filter | xproc:for-each | xproc:identity | xproc:insert | xproc:label-elements | xproc:load | xproc:log | xproc:make-absolute-uris | xproc:namespace-rename | xproc:pack | xproc:rename | xproc:replace | xproc:store | xproc:string-replace | xproc:unwrap | xproc:wrap | xproc:wrap-sequence | xproc:xinclude | xproc:xslt" mode="xproc:parse">
+	<xsl:template match="xproc:*[@hp:step = 'true']" mode="xproc:parse2">
 		<xsl:copy>
-			<xsl:attribute name="name" select="generate-id()"/>
 			<xsl:copy-of select="@*"/>
-			<xsl:attribute name="hp:step" select="'true'"/>
 			
-			<!--<xsl:if test="not(xproc:input[@port = 'source'])">
-				<p:input port="source">
-				<p:pipe port="result" step="{(preceding-sibling::xproc:*[1]/@name, generate-id(preceding-sibling::xproc:*[1]))[1]}"/>
-				</p:input>
-				</xsl:if>-->
+			<xsl:if test="not(xproc:input[@port = 'source'])">
+				<xsl:choose>
+					<xsl:when test="preceding-sibling::xproc:*[@hp:step = 'true']">
+						<p:input port="source">
+							<p:pipe port="result" step="{(preceding-sibling::xproc:*[@hp:step = 'true'][1]/@name, generate-id(preceding-sibling::xproc:*[@hp:step = 'true'][1]))[1]}"/>
+						</p:input>
+					</xsl:when>
+					<xsl:otherwise>
+						<p:input port="source"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:if>
+			<xsl:if test="not(xproc:output[@port = 'result'])">
+				<p:output port="result"/>
+			</xsl:if>
 			
-			<xsl:apply-templates select="xproc:* | text()" mode="#current"/>
+			<xsl:apply-templates select="* | text()" mode="#current"/>
 		</xsl:copy>
 	</xsl:template>
 	
@@ -116,7 +163,7 @@
 	
 	
 	<!-- Replicate XProc elements, attributes and the elements descendants. -->
-	<xsl:template match="xproc:*" mode="xproc:parse">
+	<xsl:template match="xproc:*" mode="xproc:parse2">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="* | text()" mode="#current"/>
@@ -127,7 +174,7 @@
 	
 	
 	<!-- Ignore any elements not in the XProc namespace. -->
-	<xsl:template match="*" mode="xproc:parse">
+	<xsl:template match="*" mode="xproc:parse1 xproc:parse2">
 		<xsl:copy-of select="."/>
 	</xsl:template>
 	
