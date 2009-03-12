@@ -12,12 +12,6 @@
 	version="2.0">
 	
 	
-	<xsl:output method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
-		saxon:indent-spaces="4"/>
-	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
-		saxon:indent-spaces="4"/>
-	
-	
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		xmlns:dcterms="http://purl.org/dc/terms/">
 		<rdf:Description rdf:about="$Source: $">
@@ -30,10 +24,17 @@
 		</rdf:Description>
 	</rdf:RDF>
 	
-	<xsl:strip-space elements="*"/>
 	
 	
 	
+	
+	
+	<!-- Returns the parent directory URI. -->
+	<xsl:function name="hp:baseURI" as="xs:string">
+		<xsl:param name="contextNode"/>
+		
+		<xsl:value-of select="concat(string-join(reverse(subsequence(reverse(tokenize(base-uri($contextNode), '/')), 2)), '/'), '/')"/>
+	</xsl:function>
 	
 	
 	
@@ -56,6 +57,48 @@
 		<xsl:variable name="errorCodesDoc" select="if (doc-available($errorCodesURI)) then doc($errorCodesURI) else ()" as="document-node()?"/>
 		
 		<xsl:value-of select="$errorCodesDoc//xhtml:dt[xhtml:code = $errorCode]/following-sibling::xhtml:dd[1]/xhtml:p[1]"/>
+	</xsl:function>
+	
+	
+	
+	
+	<!-- Boiler-plate identity transform -->
+	<xsl:template name="hp:identityTransform">
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			<xsl:call-template name="hp:deepCopy"/>
+		</XSLT:template>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Boiler-plate 'deep' node cloning (node, its attributes and descendants). -->
+	<xsl:template name="hp:deepCopy">
+		<XSLT:copy copy-namespaces="no">
+			<XSLT:copy-of select="@*"/>
+			<XSLT:apply-templates select="*|text()" mode="#current"/>
+		</XSLT:copy>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Returns the name of the preceding step (in document order) or 'source' 
+		if there are no preceding steps.. -->
+	<xsl:function name="hp:precedingStepName" as="xs:string">
+		<xsl:param name="contextNode" as="element()"/>
+		<xsl:variable name="precedingStep" select="$contextNode/preceding-sibling::xproc:*[@hp:step][1]"/>
+		
+		<xsl:sequence select="if ($precedingStep) then $precedingStep/@name else 'source'"/>
+	</xsl:function>
+	
+	
+	
+	
+	<!-- Returns '*' for sequence = true, otherwise '?'. -->
+	<xsl:function name="hp:sequenceQualifier" as="xs:string">
+		<xsl:param name="port" as="element()?"/>
+		<xsl:value-of select="if ($port/@sequence = 'true') then '*' else '?'"/>
 	</xsl:function>
 	
 </xsl:transform>
