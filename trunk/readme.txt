@@ -5,6 +5,8 @@ Half-pipe
 Things to do
 ------------
 
+*	
+
 *	Documentation modes required to:
 		+	Extract implemented steps from transform.
 		+	Visualise pipeline (XHTML|SVG representations).
@@ -19,11 +21,8 @@ Things to do
 
 *	Test Driven Development
 		+	Write test pipelines
-		*	Write test Schematron schemata
-		*	Write XProc pipeline to execute/validate tests.
-		
-	Looking at the XProc test suite at: <http://tests.xproc.org/>. The list of 
-	required tests is at: <http://tests.xproc.org/tests/required/test-suite.xml>
+		+	Write test Schematron schemata
+	+	Write XProc pipeline to execute/validate tests.
 	
 	
 
@@ -39,3 +38,6 @@ Things that have been done
 		+	<http://www.w3.org/TR/xproc/#app.step-errors>
 		
 		> pipeline -oresult=results\error-codes.xml pipelines\error-codes.xpl
+		
+Looking at the XProc test suite at: <http://tests.xproc.org/>. The list of 
+required tests is at: <http://tests.xproc.org/tests/required/test-suite.xml>
