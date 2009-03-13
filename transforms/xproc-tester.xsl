@@ -17,15 +17,16 @@
 	<xsl:include href="xproc-common.xsl"/>
 	
 	<xsl:output method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
-	saxon:indent-spaces="4"/>
+			saxon:indent-spaces="4"/>
+	
+	<xsl:output name="escapedMarkup" omit-xml-declaration="yes" method="xml" 
+			indent="yes" encoding="UTF-8" media-type="application/xml"
+			saxon:indent-spaces="4"/>
 	
 	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 			saxon:indent-spaces="4"/>
 	
 	<xsl:param name="MODE" select="''" as="xs:string"/>
-	
-	
-	<xsl:namespace-alias stylesheet-prefix="XSLT" result-prefix="xsl"/>
 	
 	
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -44,41 +45,63 @@
 	
 	
 	
+	
+	<!--  -->
 	<xsl:template match="/">
+		<xsl:apply-templates select="t:test" mode="t:test"/>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Generates a test result for each test. -->
+	<xsl:template match="t:test" mode="t:test">
+		<xsl:param name="href" as="xs:string?"/>
+		
 		<!-- Expand the pipeline to its full canonical form. -->
 		<xsl:variable name="pipelineDoc" as="document-node()">
 			<xsl:document>
-				<xsl:copy-of select="t:test/t:pipeline/*"/>
+				<xsl:copy-of select="t:pipeline/*"/>
 			</xsl:document>
 		</xsl:variable>
 		
 		<!-- Compile the expanded pipeline into an executable transform. -->
 		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
 		
-		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
-				<xsl:copy-of select="$compiledPipeline"/>
-			</xsl:result-document>
-		</xsl:if>
-		
-		<xsl:variable name="sourceDoc" as="document-node()">
+		<xsl:variable name="inputDoc" as="document-node()">
 			<xsl:document>
-				<xsl:copy-of select="t:test/t:input[@port = 'source']/*"/>
+				<xsl:copy-of select="t:input[@port = 'source']/*"/>
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:variable name="resultDoc" as="document-node()">
+		<xsl:variable name="outputDoc" as="document-node()">
 			<xsl:document>
-				<xsl:copy-of select="t:test/t:output[@port = 'result']/*"/>
+				<xsl:copy-of select="t:output[@port = 'result']/*"/>
 			</xsl:document>
 		</xsl:variable>
 		
 		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
 		
-		<xsl:variable name="pipelineResult" select="saxon:transform($compiledTransform, $sourceDoc)" as="document-node()"/>
+		<xsl:variable name="pipelineResult" select="saxon:transform($compiledTransform, $inputDoc)" as="document-node()"/>
 		
-		<t:result title="{t:test/t:title}"><xsl:value-of select="if (deep-equal($pipelineResult, $resultDoc)) then 'PASS' else 'FAIL'"/></t:result>
-		
+		<xsl:choose>
+			<xsl:when test="deep-equal($pipelineResult, $outputDoc)">
+				<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
+					<title><xsl:value-of select="t:title"/></title>
+				</pass>
+			</xsl:when>
+			<xsl:otherwise>
+				<fail uri="http://tests.xproc.org/tests/required/{$href}">
+					<title><xsl:value-of select="t:title"/></title>
+					<expected>
+						<xsl:sequence select="saxon:serialize($outputDoc, 'escapedMarkup')"/>
+					</expected>
+					<actual>
+						<xsl:sequence select="saxon:serialize($pipelineResult, 'escapedMarkup')"/>
+					</actual>
+				</fail>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 </xsl:transform>
