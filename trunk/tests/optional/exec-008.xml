@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="/style/testcase.xsl"?>
+<t:test xmlns:t="http://xproc.org/ns/testsuite"
+        xmlns:p="http://www.w3.org/ns/xproc"
+        xmlns:c="http://www.w3.org/ns/xproc-step"
+        xmlns:err="http://www.w3.org/ns/xproc-error">
+
+<t:title>Test exec-008</t:title>
+
+<t:pipeline>
+  <p:declare-step>
+  
+    <p:exec name="exec" command="/bin/pwd" cwd="/tmp" result-is-xml="false">
+      <p:input port="source">
+        <p:empty/>
+      </p:input>
+    </p:exec>
+
+  </p:declare-step>
+</t:pipeline>
+
+<t:output port="result">
+<c:result>/tmp</c:result>
+</t:output>
+
+</t:test>
+
