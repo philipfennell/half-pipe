@@ -105,7 +105,7 @@
 			</xsl:for-each>
 			
 			<!-- Ensure only the necessary namespace prefixes appear in the result. -->
-			<xsl:attribute name="exclude-result-prefixes" select="(in-scope-prefixes(*), 'xsl')"/>
+			<xsl:attribute name="exclude-result-prefixes" select="(in-scope-prefixes(*), 'hp xs xsl')"/>
 			
 			<xsl:attribute name="xml:base" select="hp:baseURI(.)"/>
 			
@@ -330,7 +330,7 @@
 	
 	
 	<!-- Deletes (ignores) nodes that are matching the 'match' XPath expression. -->
-	<xsl:template match="xproc:delete" mode="xproc:step">
+	<xsl:template match="xproc:delete" mode="xproc:xstep">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}"/>
 		<xsl:call-template name="hp:identityTransform"/>
 	</xsl:template>
@@ -340,7 +340,7 @@
 	
 	<!-- Inserts the new node with respect to the matching node(s) and 
 		 according to the position declaration. -->
-	<xsl:template match="xproc:insert" mode="xproc:step" priority="2">
+	<xsl:template match="xproc:insert" mode="xproc:xstep" priority="2">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}">
 			<xsl:apply-templates select="." mode="xproc:insert">
 				<xsl:with-param name="insertionNodes" as="element()*">
@@ -444,7 +444,7 @@
 	
 	
 	<!--  -->
-	<xsl:template match="xproc:log" mode="xproc:step">
+	<xsl:template match="xproc:log" mode="xproc:xstep">
 		<XSLT:template match="*" mode="{name()}-{@name}">
 			<hp:log href="{@href}">
 				<XSLT:copy-of select="." copy-namespaces="no"/>
