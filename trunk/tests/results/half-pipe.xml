@@ -15,7 +15,7 @@
         <psvi-supported>false</psvi-supported>
     </processor>
     <test-suite>
-        <title>Required tests</title>
+        <title>All tests</title>
         <pass uri="http://tests.xproc.org/tests/required/add-attribute-001.xml">
             <title>Test p:add-attribute #001</title>
         </pass>
@@ -822,26 +822,18 @@
             <title>Test http-request #012</title>
             <message>Not Supported</message>
         </fail>
-        <fail uri="http://tests.xproc.org/tests/required/identity-001.xml">
+        <pass uri="http://tests.xproc.org/tests/required/identity-001.xml">
             <title>Test p:identity-step-001</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/identity-002.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/identity-002.xml">
             <title>Test p:identity-step-002</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/identity-003.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/identity-003.xml">
             <title>Test p:identity-step-002</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/identity-004.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/identity-004.xml">
             <title>Test p:identity-step-004</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/identity-005.xml">
-            <title>Test p:identity-step-005</title>
-            <message>Not Supported</message>
-        </fail>
+        </pass>
         <fail uri="http://tests.xproc.org/tests/required/import-001.xml">
             <title>Test p:import #001</title>
             <message>Not Supported</message>
@@ -1300,6 +1292,258 @@
         </fail>
         <fail uri="http://tests.xproc.org/tests/required/xslt-005.xml">
             <title>Test xsl-t005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0033-001.xml">
+            <title>Test for err:XC0033 - 001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0033-002.xml">
+            <title>Test for err:XC0033 - 002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0034-001.xml">
+            <title>Test for err:XC0034 - 001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0035-001.xml">
+            <title>Test for err:XC0035 - 001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0035-002.xml">
+            <title>Test for err:XC0035 - 002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0036-001.xml">
+            <title>Test err:XC0036 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0036-002.xml">
+            <title>Test err:XC0036 - #002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0036-003.xml">
+            <title>Test err:XC0036 - #003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0036-004.xml">
+            <title>Test err:XC0036 - #004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0036-005.xml">
+            <title>Test err:XC0036 - #005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0037-001.xml">
+            <title>Test err:XC0037 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0037-002.xml">
+            <title>Test err:XC0037 - #002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0037-003.xml">
+            <title>Test err:XC0037 - #003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0053-001.xml">
+            <title>Test err:XC0053 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0053-002.xml">
+            <title>Test err:XC0053 - #002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0054-001.xml">
+            <title>Test err:XC0054 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0057-001.xml">
+            <title>Test err:XC0057 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0060-001.xml">
+            <title>Test err:XC0060 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/err-c0061-001.xml">
+            <title>Test err:XC0061 - #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-001.xml">
+            <title>Test exec-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-002.xml">
+            <title>Test exec-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-003.xml">
+            <title>Test exec-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-004.xml">
+            <title>Test exec-004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-005.xml">
+            <title>Test exec-005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-006.xml">
+            <title>Test exec-006</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-007.xml">
+            <title>Test exec-007</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-008.xml">
+            <title>Test exec-008</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/exec-009.xml">
+            <title>Test exec-009</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-001.xml">
+            <title>Test hash-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-002.xml">
+            <title>Test hash-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-003.xml">
+            <title>Test hash-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-004.xml">
+            <title>Test hash-004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-005.xml">
+            <title>Test hash-005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/hash-006.xml">
+            <title>Test hash-006</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/psvi-required-001.xml">
+            <title>Test psvi-required-001.xml</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/uuid-001.xml">
+            <title>Test uuid-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validrng-001.xml">
+            <title>Test validrng-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validrng-002.xml">
+            <title>Test validrng-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validrng-003.xml">
+            <title>Test validrng-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validrng-004.xml">
+            <title>Test validrng-004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validrng-005.xml">
+            <title>Test validrng-005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validsch-001.xml">
+            <title>Test validsch-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validsch-002.xml">
+            <title>Test validsch-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validsch-003.xml">
+            <title>Test validsch-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-001.xml">
+            <title>Test validxsd-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-002.xml">
+            <title>Test validxsd-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-003.xml">
+            <title>Test validxsd-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-004.xml">
+            <title>Test validxsd-004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-005.xml">
+            <title>Test validxsd-005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-006.xml">
+            <title>Test validxsd-006</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/validxsd-007.xml">
+            <title>Test validxsd-007</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/www-form-urldecode-001.xml">
+            <title>Test www-form-urldecode-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/www-form-urlencode-001.xml">
+            <title>Test www-form-urlencode-001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xquery-001.xml">
+            <title>Test XQuery #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xquery-002.xml">
+            <title>Test xquery-002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xquery-003.xml">
+            <title>Test xquery-003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xquery-004.xml">
+            <title>Test xquery-004</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xquery-005.xml">
+            <title>Test XQuery #005</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xsl-formatter-001.xml">
+            <title>Test XSL Formatter #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xslt2-001.xml">
+            <title>Test XSLT 2.0 #001</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xslt2-002.xml">
+            <title>Test XSLT 2.0 #002</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/optional/xslt2-003.xml">
+            <title>Test XSLT 2.0 #003</title>
+            <message>Not Supported</message>
+        </fail>
+        <fail uri="http://tests.xproc.org/tests/extension/unimpl-001.xml">
+            <title>Test extension elements and attributes</title>
             <message>Not Supported</message>
         </fail>
     </test-suite>
