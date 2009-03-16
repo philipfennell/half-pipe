@@ -218,6 +218,12 @@
 	
 	
 	
+	<!-- Ignore input and output ports in this mode. -->
+	<xsl:template match="p:input | p:output" mode="xproc:pipe"/>
+	
+	
+	
+	
 	<!-- Creates a variable to hold the results of the p:identity step. -->
 	<xsl:template match="xproc:*" mode="xproc:pipe">
 		<XSLT:variable name="{@name}" as="document-node(){hp:sequenceQualifier(xproc:output[@port = 'result'])}"
@@ -322,7 +328,7 @@
 	
 	
 	<!-- Ignore input and output elements in this mode. -->
-	<xsl:template match="xproc:input | xproc:output" mode="xproc:step"/>
+	<xsl:template match="p:input | p:output" mode="xproc:step"/>
 	
 	
 	
