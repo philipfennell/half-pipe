@@ -61,7 +61,7 @@
 		<!-- Expand the pipeline to its full canonical form. -->
 		<xsl:variable name="pipelineDoc" as="document-node()">
 			<xsl:document>
-				<xsl:copy-of select="t:pipeline/*"/>
+				<xsl:apply-templates select="t:pipeline" mode="t:pipeline"/>
 			</xsl:document>
 		</xsl:variable>
 		
@@ -74,7 +74,7 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:variable name="outputDoc" as="document-node()">
+		<xsl:variable name="expectedDoc" as="document-node()">
 			<xsl:document>
 				<xsl:copy-of select="t:output[@port = 'result']/*"/>
 			</xsl:document>
@@ -82,26 +82,71 @@
 		
 		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
 		
-		<xsl:variable name="pipelineResult" select="saxon:transform($compiledTransform, $inputDoc)" as="document-node()"/>
+		<xsl:variable name="actualDoc" select="saxon:transform($compiledTransform, $inputDoc)" as="document-node()"/>
 		
 		<xsl:choose>
-			<xsl:when test="deep-equal($pipelineResult, $outputDoc)">
+			<xsl:when test="deep-equal($actualDoc, $expectedDoc)">
 				<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
 					<title><xsl:value-of select="t:title"/></title>
 				</pass>
 			</xsl:when>
 			<xsl:otherwise>
-				<fail uri="http://tests.xproc.org/tests/required/{$href}">
-					<title><xsl:value-of select="t:title"/></title>
-					<expected>
-						<xsl:sequence select="saxon:serialize($outputDoc, 'escapedMarkup')"/>
-					</expected>
-					<actual>
-						<xsl:sequence select="saxon:serialize($pipelineResult, 'escapedMarkup')"/>
-					</actual>
-				</fail>
+				<xsl:apply-templates select="$actualDoc" mode="t:failed">
+					<xsl:with-param name="href" select="$href" as="xs:string?"/>
+					<xsl:with-param name="expectedDoc" select="$expectedDoc" as="document-node()"/>
+					<xsl:with-param name="actualDoc" select="$actualDoc" as="document-node()"/>
+				</xsl:apply-templates>
 			</xsl:otherwise>
-		</xsl:choose>
+			</xsl:choose>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Retrieves the pipeline referenced by the href attribute. -->
+	<xsl:template match="t:pipeline[@href]" mode="t:pipeline">
+		<xsl:variable name="pipelineURI" select="xs:anyURI(concat(hp:baseURI(.), @href))" as="xs:anyURI"/>
+		<xsl:message>[XSLT] <xsl:value-of select="resolve-uri($pipelineURI)"/></xsl:message>
+		<xsl:copy-of select="if (doc-available($pipelineURI)) then doc($pipelineURI) else t:error($pipelineURI, 'Pipeline could not be loaded.')"/>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Copies the in-line pipeline document. -->
+	<xsl:template match="t:pipeline" mode="t:pipeline">
+		<xsl:copy-of select="*"/>
+	</xsl:template>
+	
+	
+	
+	
+	<!--  -->
+	<xsl:template match="/hp:error" mode="t:failed" priority="1">
+		<xsl:param name="href" as="xs:string?"/>
+		<xsl:param name="actualDoc" as="document-node()"/>
+		<fail uri="http://tests.xproc.org/tests/required/{$href}">
+			<message><xsl:value-of select="text()"/></message>
+		</fail>
+	</xsl:template>
+	
+	
+	
+	
+	<!--  -->
+	<xsl:template match="/*" mode="t:failed">
+		<xsl:param name="href" as="xs:string?"/>
+		<xsl:param name="expectedDoc" as="document-node()"/>
+		<xsl:param name="actualDoc" as="document-node()"/>
+		<fail uri="http://tests.xproc.org/tests/required/{$href}">
+			<title><xsl:value-of select="t:title"/></title>
+			<expected>
+				<xsl:sequence select="saxon:serialize($expectedDoc, 'escapedMarkup')"/>
+			</expected>
+			<actual>
+				<xsl:sequence select="saxon:serialize($actualDoc, 'escapedMarkup')"/>
+			</actual>
+		</fail>
 	</xsl:template>
 	
 </xsl:transform>

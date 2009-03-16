@@ -48,6 +48,7 @@
 				<xsl:apply-templates select="$pipelineDoc" mode="xproc:parse1"/>
 			</xsl:document>
 		</xsl:variable>
+		
 		<xsl:document>
 			<xsl:apply-templates select="$parse1" mode="xproc:parse"/>
 		</xsl:document>
