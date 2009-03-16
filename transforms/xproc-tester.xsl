@@ -68,6 +68,12 @@
 		<!-- Compile the expanded pipeline into an executable transform. -->
 		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
 		
+		<xsl:if test="$MODE = 'debug'">
+			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
+				<xsl:copy-of select="$compiledPipeline"/>
+			</xsl:result-document>
+		</xsl:if>
+		
 		<xsl:variable name="inputDoc" as="document-node()">
 			<xsl:document>
 				<xsl:copy-of select="t:input[@port = 'source']/*"/>
