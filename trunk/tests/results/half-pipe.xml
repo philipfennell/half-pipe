@@ -834,6 +834,9 @@
         <pass uri="http://tests.xproc.org/tests/required/identity-004.xml">
             <title>Test p:identity-step-004</title>
         </pass>
+        <pass uri="http://tests.xproc.org/tests/required/identity-005.xml">
+            <title>Test p:identity-step-005</title>
+        </pass>
         <fail uri="http://tests.xproc.org/tests/required/import-001.xml">
             <title>Test p:import #001</title>
             <message>Not Supported</message>
