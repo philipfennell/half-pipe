@@ -295,7 +295,7 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
-		<XSLT:sequence select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']/*"/>
+		<XSLT:sequence select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
 	</xsl:template>
 	
 	
