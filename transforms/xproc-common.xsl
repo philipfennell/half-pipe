@@ -3,6 +3,7 @@
 	xmlns:hp="http://code.google.com/p/half-pipe/"
 	xmlns:p="http://www.w3.org/ns/xproc"
 	xmlns:saxon="http://saxon.sf.net/"
+	xmlns:t="http://xproc.org/ns/testsuite"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	xmlns:xproc="http://www.w3.org/ns/xproc"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -50,6 +51,17 @@
 	
 	
 	
+	<!-- Displays the error message on stdout and terminates the transformation. -->
+	<xsl:function name="t:error">
+		<xsl:param name="arg" as="xs:string"/>
+		<xsl:param name="message" as="xs:string"/>
+		
+		<xsl:message terminate="yes">[XProc][TestSuite][FATAL] <xsl:value-of select="$arg"/> - <xsl:value-of select="$message"/></xsl:message>
+	</xsl:function>
+	
+	
+	
+	
 	<!-- Returns the error message text for the passed error code. -->
 	<xsl:function name="hp:getErrorMessage" as="xs:string">
 		<xsl:param name="errorCode" as="xs:string"/>
@@ -64,7 +76,10 @@
 	
 	<!-- Boiler-plate identity transform -->
 	<xsl:template name="hp:identityTransform">
+		<xsl:param name="message" as="element()*"/>
+		
 		<XSLT:template match="*" mode="{name()}-{@name}">
+			<xsl:copy-of select="$message"/>
 			<xsl:call-template name="hp:deepCopy"/>
 		</XSLT:template>
 	</xsl:template>

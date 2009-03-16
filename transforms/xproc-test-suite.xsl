@@ -56,7 +56,7 @@
 	<!-- Generate test report document. -->
 	<xsl:template match="t:test-suite" mode="t:report">
 		<xsl:variable name="implementationDoc" select="doc('xproc-compiler.xsl')" as="document-node()"/>
-		<xsl:variable name="implementedSteps" select="for $name in distinct-values($implementationDoc//xsl:template[@mode = 'xproc:step']/@match) return substring-after($name, ':')" as="xs:string*"/>
+		<xsl:variable name="implementedSteps" select="for $name in distinct-values($implementationDoc//xsl:template[@hp:implemented = 'true']/@match) return substring-after($name, ':')" as="xs:string*"/>
 		<xsl:variable name="sortedTests" as="element()*">
 			<xsl:apply-templates select="t:test[starts-with(@href, 'required')]" mode="t:sort">
 				<xsl:with-param name="implementedSteps" select="$implementedSteps"/>
@@ -87,6 +87,11 @@
 			</processor>
 			<test-suite>
 				<title><xsl:value-of select="t:title"/></title>
+				
+				<xsl:message>[XSLT] implemented steps: <xsl:value-of select="$implementedSteps"/></xsl:message>
+				<xsl:message>[XSLT]step count = <xsl:value-of select="count($sortedTests)"/></xsl:message>
+				
+<!--				<xsl:sequence select="$sortedTests"/>-->
 				<xsl:apply-templates select="$sortedTests" mode="#current"/>
 			</test-suite>
 		</test-report>
