@@ -8,7 +8,7 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:XSLT="http://www.w3.org/1999/XSL/Transform/output"
-		exclude-result-prefixes="saxon xhtml xproc xsl"
+		exclude-result-prefixes="hp saxon xhtml xproc xsl"
 		version="2.0">
 	
 	<xsl:import href="xproc-parser.xsl"/>
@@ -233,15 +233,22 @@
 			<xsl:variable name="inputPort" select="'result'"/>
 			
 			<XSLT:document>
-				<XSLT:variable name="input-source" as="document-node(){hp:sequenceQualifier(xproc:input[@port = 'source'])}">
-					<XSLT:document>
-						<xsl:apply-templates select="xproc:input" mode="xproc:pipe-input"/>
-					</XSLT:document>
-				</XSLT:variable>
+				
+				<xsl:for-each select="xproc:input">
+					<XSLT:variable name="input-{@port}" as="document-node(){hp:sequenceQualifier(xproc:input[@port = 'source'])}">
+						<XSLT:document>
+							<xsl:apply-templates select="." mode="xproc:pipe-input"/>
+						</XSLT:document>
+					</XSLT:variable>
+				</xsl:for-each>
+				
 				<hp:job-bag>
-					<hp:input port="source">
-						<XSLT:sequence select="input-source"/>
-					</hp:input>
+					<xsl:for-each select="xproc:input">
+						<hp:input port="{@port}">
+							<XSLT:sequence select="$input-{@port}"/>
+						</hp:input>
+					</xsl:for-each>
+					
 					<hp:output port="result">
 						<XSLT:apply-templates select="$input-source" mode="{name()}-{@name}"/>
 					</hp:output>
@@ -295,7 +302,7 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = '{@port}']/*"/>
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = 'result']/*"/>
 	</xsl:template>
 	
 	
@@ -360,7 +367,7 @@
 	
 	
 	<!-- Deletes (ignores) nodes that are matching the 'match' XPath expression. -->
-	<xsl:template match="xproc:delete" mode="xproc:xstep" hp:implemented="false">
+	<xsl:template match="xproc:delete" mode="xproc:step" hp:implemented="true">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}"/>
 		<xsl:call-template name="hp:identityTransform"/>
 	</xsl:template>
@@ -370,7 +377,7 @@
 	
 	<!-- Inserts the new node with respect to the matching node(s) and 
 		 according to the position declaration. -->
-	<xsl:template match="xproc:insert" mode="xproc:xstep" priority="2" hp:implemented="false">
+	<xsl:template match="xproc:insert" mode="xproc:step" priority="2" hp:implemented="true">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}">
 			<xsl:next-match>
 				<xsl:with-param name="insertionNodes" as="element()*">
@@ -388,7 +395,7 @@
 	
 	
 	<!-- Insert as the 'first child' of matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'first-child']" mode="xproc:xstep">
+	<xsl:template match="xproc:insert[@position = 'first-child']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<XSLT:copy copy-namespaces="no">
@@ -400,7 +407,7 @@
 	
 	
 	<!-- Insert as the 'last child' of matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'last-child']" mode="xproc:xstep">
+	<xsl:template match="xproc:insert[@position = 'last-child']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<XSLT:copy copy-namespaces="no">
@@ -412,7 +419,7 @@
 	
 	
 	<!-- Insert 'before' matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:xstep">
+	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:sequence select="$insertionNodes"/>
@@ -421,7 +428,7 @@
 	
 	
 	<!-- Insert 'after' matching node(s). -->
-	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:xstep">
+	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:call-template name="hp:deepCopy"/>
