@@ -69,7 +69,7 @@
 		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
 		
 		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
+			<xsl:result-document format="debug" href="../../debug/compiledPipeline.xsl">
 				<xsl:copy-of select="$compiledPipeline"/>
 			</xsl:result-document>
 		</xsl:if>
@@ -89,6 +89,12 @@
 		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
 		
 		<xsl:variable name="actualDoc" select="saxon:transform($compiledTransform, $inputDoc)" as="document-node()"/>
+		
+		<xsl:if test="$MODE = 'debug'">
+			<xsl:result-document format="debug" href="../../debug/actual.xml">
+				<xsl:copy-of select="$actualDoc"/>
+			</xsl:result-document>
+		</xsl:if>
 		
 		<xsl:choose>
 			<xsl:when test="deep-equal($actualDoc, $expectedDoc)">
@@ -132,6 +138,7 @@
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="actualDoc" as="document-node()"/>
 		<fail uri="http://tests.xproc.org/tests/required/{$href}">
+			<error><xsl:value-of select="$actualDoc/hp:error/@code"/></error>
 			<message><xsl:value-of select="text()"/></message>
 		</fail>
 	</xsl:template>

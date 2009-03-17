@@ -57,6 +57,8 @@
 	<xsl:template match="t:test-suite" mode="t:report">
 		<xsl:variable name="implementationDoc" select="doc('xproc-compiler.xsl')" as="document-node()"/>
 		<xsl:variable name="implementedSteps" select="for $name in distinct-values($implementationDoc//xsl:template[@hp:implemented = 'true']/@match) return substring-after($name, ':')" as="xs:string*"/>
+		
+		
 		<xsl:variable name="sortedTests" as="element()*">
 			<xsl:apply-templates select="t:test[starts-with(@href, 'required')]" mode="t:sort">
 				<xsl:with-param name="implementedSteps" select="$implementedSteps"/>
