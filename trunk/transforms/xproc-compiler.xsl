@@ -8,7 +8,7 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:XSLT="http://www.w3.org/1999/XSL/Transform/output"
-		exclude-result-prefixes="hp saxon xhtml xproc xsl"
+		exclude-result-prefixes="hp saxon xhtml xproc xs xsl"
 		version="2.0">
 	
 	<xsl:import href="xproc-parser.xsl"/>
@@ -98,6 +98,7 @@
 			<xsl:variable name="contextNode" select="*"/>
 			
 			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
+			<xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
 			
 			<!-- Add namespace declarations from the source pipeline. -->
 			<xsl:for-each select="in-scope-prefixes(*)">
@@ -280,7 +281,26 @@
 	
 	<!-- Copy the in-line content. -->
 	<xsl:template match="xproc:inline" mode="xproc:pipe-input">
-		<xsl:copy-of select="*"/>
+		<xsl:apply-templates select="* | text()" mode="xproc:inline"/>
+	</xsl:template>
+	
+	
+	<!-- Copy elements, their attributes and children. -->
+	<xsl:template match="element()" mode="xproc:inline">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="* | text() | comment() | processing-instruction()" mode="#current"/>
+		</xsl:copy>
+	</xsl:template>
+	
+	<!-- Copy comments. -->
+	<xsl:template match="comment()" mode="xproc:inline">
+		<XSLT:comment><xsl:value-of select="."/></XSLT:comment>
+	</xsl:template>
+	
+	<!-- Copy processing instructions. -->
+	<xsl:template match="processing-instruction()" mode="xproc:inline">
+		<XSLT:processing-instruction name="{name()}"><xsl:value-of select="."/></XSLT:processing-instruction>
 	</xsl:template>
 	
 	
@@ -335,13 +355,13 @@
 	
 	
 	<!-- Ignore input elements in this mode. -->
-	<xsl:template match="p:input" mode="xproc:step" hp:implemented="true"/>
+	<xsl:template match="p:input" mode="xproc:step" priority="12" hp:implemented="true"/>
 	
 	
 	
 	
 	<!-- Ignore output elements in this mode. -->
-	<xsl:template match="p:output" mode="xproc:step"/>
+	<xsl:template match="p:output" mode="xproc:step" priority="12"/>
 	
 	
 	
@@ -384,11 +404,6 @@
 					<xsl:apply-templates select="p:input[@port = 'insertion']/*" mode="xproc:input"/>
 				</xsl:with-param>
 			</xsl:next-match>
-			<!--<xsl:apply-templates select="." mode="xproc:insert">
-				<xsl:with-param name="insertionNodes" as="element()*">
-					<xsl:apply-templates select="p:input[@port = 'insertion']/*" mode="xproc:input"/>
-				</xsl:with-param>
-			</xsl:apply-templates>-->
 		</XSLT:template>
 		<xsl:call-template name="hp:identityTransform"/>
 	</xsl:template>
@@ -423,7 +438,14 @@
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
 		<xsl:sequence select="$insertionNodes"/>
-		<xsl:call-template name="hp:deepCopy"/>
+		<XSLT:choose>
+			<XSLT:when test="current() instance of element()">
+				<xsl:call-template name="hp:deepCopy"/>
+			</XSLT:when>
+			<XSLT:otherwise>
+				<XSLT:copy-of select="."/>
+			</XSLT:otherwise>
+		</XSLT:choose>
 	</xsl:template>
 	
 	
@@ -431,7 +453,14 @@
 	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:step">
 		<xsl:param name="insertionNodes" as="element()*"/>
 		
-		<xsl:call-template name="hp:deepCopy"/>
+		<XSLT:choose>
+			<XSLT:when test="current() instance of element()">
+				<xsl:call-template name="hp:deepCopy"/>
+			</XSLT:when>
+			<XSLT:otherwise>
+				<XSLT:copy-of select="."/>
+			</XSLT:otherwise>
+		</XSLT:choose>
 		<xsl:sequence select="$insertionNodes"/>
 	</xsl:template>
 	
@@ -479,18 +508,26 @@
 	</xsl:template>
 	
 	<xsl:template match="text()" mode="xproc:add-attribute"/>
-		
 	
 	
 	
 	
-	
-	<!--  -->
+	<!-- Generates a log instruction. -->
 	<xsl:template match="xproc:log" mode="xproc:xstep" hp:implemented="false">
 		<XSLT:template match="*" mode="{name()}-{@name}">
 			<hp:log href="{@href}">
 				<XSLT:copy-of select="." copy-namespaces="no"/>
 			</hp:log>
+		</XSLT:template>
+	</xsl:template>
+	
+	
+	
+	
+	<!--  -->
+	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="false">
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			
 		</XSLT:template>
 	</xsl:template>
 	
