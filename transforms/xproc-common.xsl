@@ -41,11 +41,13 @@
 	
 	
 	<!-- Displays the error message for the passed error code on stdout and terminates the transformation. -->
-	<xsl:function name="hp:error">
+	<xsl:function name="hp:error" as="element()">
 		<xsl:param name="errorCode" as="xs:string"/>
 		<xsl:param name="arg" as="xs:string"/>
+		<xsl:variable name="errorMessage" select="concat($arg, ' - ', hp:getErrorMessage($errorCode))"/>
 		
-		<xsl:message terminate="yes">[XProc][<xsl:value-of select="$errorCode"/>][FATAL] <xsl:value-of select="$arg"/> - <xsl:value-of select="hp:getErrorMessage($errorCode)"/></xsl:message>
+		<xsl:message terminate="no">[XProc][<xsl:value-of select="$errorCode"/>][FATAL] <xsl:value-of select="$errorMessage"/></xsl:message>
+		<hp:error code="{$errorCode}"><xsl:value-of select="$errorMessage"/></hp:error>
 	</xsl:function>
 	
 	
