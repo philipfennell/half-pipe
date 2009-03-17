@@ -82,7 +82,6 @@
 		
 		<xsl:variable name="expectedDoc" as="document-node()">
 			<xsl:document>
-				<!--<xsl:copy-of select="t:output[@port = 'result']/*"/>-->
 				<xsl:apply-templates select="t:output" mode="t:output"/>
 			</xsl:document>
 		</xsl:variable>
