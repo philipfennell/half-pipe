@@ -8,7 +8,7 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:XSLT="http://www.w3.org/1999/XSL/Transform/output"
-	exclude-result-prefixes="saxon xhtml xproc xsl XSLT"
+	exclude-result-prefixes="saxon xhtml xproc xs xsl XSLT"
 	version="2.0">
 	
 	<xsl:include href="xproc-common.xsl"/>
