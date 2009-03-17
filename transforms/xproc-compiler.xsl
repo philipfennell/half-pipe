@@ -327,8 +327,14 @@
 	
 	
 	
-	<!-- Ignore input and output elements in this mode. -->
-	<xsl:template match="p:input | p:output" mode="xproc:step"/>
+	<!-- Ignore input elements in this mode. -->
+	<xsl:template match="p:input" mode="xproc:step" hp:implemented="true"/>
+	
+	
+	
+	
+	<!-- Ignore output elements in this mode. -->
+	<xsl:template match="p:output" mode="xproc:step"/>
 	
 	
 	
