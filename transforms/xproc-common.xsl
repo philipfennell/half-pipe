@@ -93,7 +93,7 @@
 	<xsl:template name="hp:deepCopy">
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
-			<XSLT:apply-templates select="*|text()" mode="#current"/>
+			<XSLT:apply-templates select="*|text()|comment()|processing-instruction()" mode="#current"/>
 		</XSLT:copy>
 	</xsl:template>
 	
