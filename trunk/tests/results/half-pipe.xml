@@ -15,7 +15,7 @@
         <psvi-supported>false</psvi-supported>
     </processor>
     <test-suite>
-        <!--<title>All tests</title>-->
+        <title>All tests</title>
         <pass uri="http://tests.xproc.org/tests/required/add-attribute-001.xml">
             <title>Test p:add-attribute #001</title>
         </pass>
