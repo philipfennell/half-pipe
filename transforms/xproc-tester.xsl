@@ -80,15 +80,23 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:variable name="expectedDoc" as="document-node()">
-			<xsl:document>
-				<xsl:apply-templates select="t:output" mode="t:output"/>
-			</xsl:document>
+		<xsl:variable name="expectedDoc" as="document-node()+">
+			<xsl:apply-templates select="t:output[@port = 'result']" mode="t:output"/>
 		</xsl:variable>
+		
+		<xsl:message>[XSLT] count($expectedDoc) =   <xsl:value-of select="count($expectedDoc)"/></xsl:message>
 		
 		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
 		
-		<xsl:variable name="actualDoc" select="saxon:transform($compiledTransform, $inputDoc)" as="document-node()"/>
+		<xsl:variable name="actualDoc" as="document-node()*">
+			<xsl:for-each select="saxon:transform($compiledTransform, $inputDoc)/element()">
+				<xsl:document>
+					<xsl:copy-of select="."/>
+				</xsl:document>
+			</xsl:for-each>
+		</xsl:variable>
+				
+		<xsl:message>[XSLT] count($actualDoc) =   <xsl:value-of select="count($actualDoc)"/></xsl:message>
 		
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/actual.xml">
@@ -106,8 +114,8 @@
 				<xsl:apply-templates select="$actualDoc" mode="t:failed">
 					<xsl:with-param name="href" select="$href" as="xs:string?"/>
 					<xsl:with-param name="title" select="t:title" as="xs:string"/>
-					<xsl:with-param name="expectedDoc" select="$expectedDoc" as="document-node()"/>
-					<xsl:with-param name="actualDoc" select="$actualDoc" as="document-node()"/>
+					<xsl:with-param name="expectedDoc" select="$expectedDoc" as="document-node()+"/>
+					<xsl:with-param name="actualDoc" select="$actualDoc" as="document-node()*"/>
 				</xsl:apply-templates>
 			</xsl:otherwise>
 			</xsl:choose>
@@ -118,7 +126,9 @@
 	
 	<!-- Expected document in a t:document. -->
 	<xsl:template match="t:output[@port = 'result']/t:document" mode="t:output">
-		<xsl:copy-of select="*"/>
+		<xsl:document>
+			<xsl:copy-of select="*"/>
+		</xsl:document>
 	</xsl:template>
 	
 	
@@ -126,7 +136,9 @@
 	
 	<!-- Expected document. -->
 	<xsl:template match="t:output[@port = 'result'][not(t:document)]" mode="t:output">
-		<xsl:copy-of select="*"/>
+		<xsl:document>
+			<xsl:copy-of select="*"/>
+		</xsl:document>
 	</xsl:template>
 	
 	
@@ -154,7 +166,7 @@
 	<xsl:template match="/hp:error" mode="t:failed" priority="1">
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="title" as="xs:string"/>
-		<xsl:param name="actualDoc" as="document-node()"/>
+		<xsl:param name="actualDoc" as="document-node()+"/>
 		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
 			<error><xsl:value-of select="$actualDoc/hp:error/@code"/></error>
@@ -169,15 +181,15 @@
 	<xsl:template match="/*" mode="t:failed">
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="title" as="xs:string"/>
-		<xsl:param name="expectedDoc" as="document-node()"/>
-		<xsl:param name="actualDoc" as="document-node()"/>
+		<xsl:param name="expectedDoc" as="document-node()+"/>
+		<xsl:param name="actualDoc" as="document-node()+"/>
 		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
 			<expected>
-				<xsl:sequence select="saxon:serialize($expectedDoc, 'escapedMarkup')"/>
+				<xsl:sequence select="for $doc in $expectedDoc return saxon:serialize($doc, 'escapedMarkup')"/>
 			</expected>
 			<actual>
-				<xsl:sequence select="saxon:serialize($actualDoc, 'escapedMarkup')"/>
+				<xsl:sequence select="for $doc in $expectedDoc return saxon:serialize($doc, 'escapedMarkup')"/>
 			</actual>
 		</fail>
 	</xsl:template>
