@@ -135,6 +135,11 @@
 			
 			<XSLT:strip-space elements="*"/>
 			
+			<!-- Generate port parameters. -->
+			<xsl:for-each select="*/xproc:input">
+				<XSLT:param name="{upper-case(@port)}" as="item()*"/>
+			</xsl:for-each>
+			
 			<!-- Start compiling the pipeline. -->
 			<xsl:apply-templates select="*" mode="#current"/>
 		</XSLT:transform>
@@ -168,12 +173,7 @@
 		<XSLT:variable name="{(@name, 'source')[1]}" as="document-node()" hp:input="source">
 			<XSLT:document>
 				<hp:job-bag>
-					<hp:input port="source">
-						<XSLT:sequence select="/"/>
-					</hp:input>
-					<hp:output port="result">
-						<XSLT:sequence select="/"/>
-					</hp:output>
+					<xsl:apply-templates select="(xproc:input, xproc:output)" mode="xproc:pipe-ports"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
@@ -225,6 +225,40 @@
 	
 	
 	
+	<!-- Parameter input takes its content from the named parameter port. -->
+	<xsl:template match="p:input[@kind = 'parameter']" mode="xproc:pipe-ports">
+		<hp:input port="{@port}">
+			<XSLT:sequence select="$PARAMETERS"/>
+		</hp:input>
+	</xsl:template>
+	
+	
+	<!-- Source input port takes SOURCE port (parameter) or the document root as its content. -->
+	<xsl:template match="p:input[@port = 'source']" mode="xproc:pipe-ports">
+		<hp:input port="{@port}">
+			<XSLT:sequence select="($SOURCE, /)[1]"/>
+		</hp:input>
+	</xsl:template>
+	
+	
+	<!--  -->
+	<xsl:template match="p:input" mode="xproc:pipe-ports">
+		<hp:input port="{@port}">
+			<XSLT:sequence select="${upper-case(@port)}"/>
+		</hp:input>
+	</xsl:template>
+	
+	
+	<!-- Result port takes source port as its content. -->
+	<xsl:template match="p:output" mode="xproc:pipe-ports">
+		<hp:output port="{@port}">
+			<XSLT:sequence select="($SOURCE, /)[1]"/>
+		</hp:output>
+	</xsl:template>
+	
+	
+	
+	
 	<!-- Creates a variable to hold the results of the p:identity step. -->
 	<xsl:template match="xproc:*" mode="xproc:pipe">
 		<XSLT:variable name="{@name}" as="document-node(){hp:sequenceQualifier(xproc:output[@port = 'result'])}"
@@ -236,7 +270,7 @@
 			<XSLT:document>
 				
 				<xsl:for-each select="xproc:input">
-					<XSLT:variable name="input-{@port}" as="document-node(){hp:sequenceQualifier(xproc:input[@port = 'source'])}">
+					<XSLT:variable name="input-{@port}" as="document-node(){hp:sequenceQualifier(.)}">
 						<XSLT:document>
 							<xsl:apply-templates select="." mode="xproc:pipe-input"/>
 						</XSLT:document>
@@ -251,7 +285,11 @@
 					</xsl:for-each>
 					
 					<hp:output port="result">
-						<XSLT:apply-templates select="$input-source" mode="{name()}-{@name}"/>
+						<XSLT:apply-templates select="$input-source" mode="{name()}-{@name}">
+							<xsl:for-each select="xproc:input">
+								<XSLT:with-param name="input-{@port}" select="$input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
+							</xsl:for-each>
+						</XSLT:apply-templates>
 					</hp:output>
 					
 					<!-- Insert xproc:log nodes, if required. -->
@@ -321,8 +359,14 @@
 	
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
+	<xsl:template match="p:input[@port = 'source']/xproc:pipe" mode="xproc:pipe-input">
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = '{@port}']/*"/>
+	</xsl:template>
+	
+	
+	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = 'result']/*"/>
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:{local-name(..)}[@port = '{@port}']/*"/>
 	</xsl:template>
 	
 	
@@ -354,6 +398,14 @@
 	
 	
 	
+	<!-- Creates input port parameters for step templates. -->
+	<xsl:template match="p:input" mode="xproc:step-inputs">
+		<XSLT:param name="input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
+	</xsl:template>
+	
+	
+	
+	
 	<!-- Ignore input elements in this mode. -->
 	<xsl:template match="p:input" mode="xproc:step" priority="12" hp:implemented="true"/>
 	
@@ -380,7 +432,9 @@
 	
 	<!-- Creates an identity transform for the p:identity step. -->
 	<xsl:template match="xproc:identity" mode="xproc:step" hp:implemented="true">
-		<xsl:call-template name="hp:identityTransform"/>
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			<XSLT:copy-of select="."/>
+		</XSLT:template>
 	</xsl:template>
 	
 	
@@ -411,11 +465,11 @@
 	
 	<!-- Insert as the 'first child' of matching node(s). -->
 	<xsl:template match="xproc:insert[@position = 'first-child']" mode="xproc:step">
-		<xsl:param name="insertionNodes" as="element()*"/>
+		<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 		
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
-			<xsl:sequence select="$insertionNodes"/>
+			<XSLT:sequence select="$input-insertion"/>
 			<XSLT:apply-templates select="*|text()" mode="#current"/>
 		</XSLT:copy>
 	</xsl:template>
@@ -423,45 +477,45 @@
 	
 	<!-- Insert as the 'last child' of matching node(s). -->
 	<xsl:template match="xproc:insert[@position = 'last-child']" mode="xproc:step">
-		<xsl:param name="insertionNodes" as="element()*"/>
+		<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 		
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
 			<XSLT:apply-templates select="*|text()" mode="#current"/>
-			<xsl:sequence select="$insertionNodes"/>
+			<XSLT:sequence select="$input-insertion"/>
 		</XSLT:copy>
 	</xsl:template>
 	
 	
 	<!-- Insert 'before' matching node(s). -->
 	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:step">
-		<xsl:param name="insertionNodes" as="element()*"/>
+		<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 		
-		<xsl:sequence select="$insertionNodes"/>
-		<XSLT:choose>
-			<XSLT:when test="current() instance of element()">
-				<xsl:call-template name="hp:deepCopy"/>
-			</XSLT:when>
-			<XSLT:otherwise>
+		<XSLT:sequence select="$input-insertion"/>
+		<xsl:choose>
+			<xsl:when test="matches(@match, 'processing-instruction\(.*\)|comment\(\)')">
 				<XSLT:copy-of select="."/>
-			</XSLT:otherwise>
-		</XSLT:choose>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="hp:deepCopy"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	
 	<!-- Insert 'after' matching node(s). -->
 	<xsl:template match="xproc:insert[@position = 'after']" mode="xproc:step">
-		<xsl:param name="insertionNodes" as="element()*"/>
+		<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 		
-		<XSLT:choose>
-			<XSLT:when test="current() instance of element()">
-				<xsl:call-template name="hp:deepCopy"/>
-			</XSLT:when>
-			<XSLT:otherwise>
+		<xsl:choose>
+			<xsl:when test="matches(@match, 'processing-instruction\(.*\)|comment\(\)')">
 				<XSLT:copy-of select="."/>
-			</XSLT:otherwise>
-		</XSLT:choose>
-		<xsl:sequence select="$insertionNodes"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="hp:deepCopy"/>
+			</xsl:otherwise>
+		</xsl:choose>
+		<XSLT:sequence select="$input-insertion"/>
 	</xsl:template>
 	
 	
@@ -527,7 +581,9 @@
 	<!--  -->
 	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="false">
 		<XSLT:template match="*" mode="{name()}-{@name}">
-			
+			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
+			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
+			<XSLT:copy-of select="saxon:transform($compiledTransform, $input-source)"/>
 		</XSLT:template>
 	</xsl:template>
 	
