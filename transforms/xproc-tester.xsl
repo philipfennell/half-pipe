@@ -105,6 +105,7 @@
 			<xsl:otherwise>
 				<xsl:apply-templates select="$actualDoc" mode="t:failed">
 					<xsl:with-param name="href" select="$href" as="xs:string?"/>
+					<xsl:with-param name="title" select="t:title" as="xs:string"/>
 					<xsl:with-param name="expectedDoc" select="$expectedDoc" as="document-node()"/>
 					<xsl:with-param name="actualDoc" select="$actualDoc" as="document-node()"/>
 				</xsl:apply-templates>
@@ -152,8 +153,10 @@
 	<!--  -->
 	<xsl:template match="/hp:error" mode="t:failed" priority="1">
 		<xsl:param name="href" as="xs:string?"/>
+		<xsl:param name="title" as="xs:string"/>
 		<xsl:param name="actualDoc" as="document-node()"/>
-		<fail uri="http://tests.xproc.org/tests/required/{$href}">
+		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
+			<title><xsl:value-of select="$title"/></title>
 			<error><xsl:value-of select="$actualDoc/hp:error/@code"/></error>
 			<message><xsl:value-of select="text()"/></message>
 		</fail>
@@ -165,10 +168,11 @@
 	<!--  -->
 	<xsl:template match="/*" mode="t:failed">
 		<xsl:param name="href" as="xs:string?"/>
+		<xsl:param name="title" as="xs:string"/>
 		<xsl:param name="expectedDoc" as="document-node()"/>
 		<xsl:param name="actualDoc" as="document-node()"/>
-		<fail uri="http://tests.xproc.org/tests/required/{$href}">
-			<title><xsl:value-of select="t:title"/></title>
+		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
+			<title><xsl:value-of select="$title"/></title>
 			<expected>
 				<xsl:sequence select="saxon:serialize($expectedDoc, 'escapedMarkup')"/>
 			</expected>
