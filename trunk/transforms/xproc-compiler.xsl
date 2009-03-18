@@ -359,14 +359,8 @@
 	
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
-	<xsl:template match="p:input[@port = 'source']/xproc:pipe" mode="xproc:pipe-input">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:output[@port = '{@port}']/*"/>
-	</xsl:template>
-	
-	
-	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:{local-name(..)}[@port = '{@port}']/*"/>
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
 	</xsl:template>
 	
 	
