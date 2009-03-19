@@ -13,8 +13,7 @@
 		exclude-result-prefixes="err hp saxon xhtml xproc xs xsl"
 		version="2.0">
 	
-	<xsl:import href="xproc-compiler.xsl"/>
-	<xsl:include href="xproc-common.xsl"/>
+	<xsl:import href="half-pipe.xsl"/>
 	
 	<xsl:output method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 			saxon:indent-spaces="4"/>
@@ -66,59 +65,95 @@
 		</xsl:variable>
 		
 		<!-- Compile the expanded pipeline into an executable transform. -->
-		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
+<!--		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>-->
 		
-		<xsl:if test="$MODE = 'debug'">
+		<!--<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/compiledPipeline.xsl">
 				<xsl:copy-of select="$compiledPipeline"/>
 			</xsl:result-document>
-		</xsl:if>
+		</xsl:if>-->
 		
-		<xsl:variable name="inputDoc" as="document-node()">
-			<xsl:document>
-				<xsl:copy-of select="t:input[@port = 'source']/*"/>
-			</xsl:document>
+		<!-- Marshal the input document(s) together -->
+		<xsl:variable name="inputDocs" as="document-node()*">
+			<xsl:apply-templates select="t:input[@port = 'source']" mode="t:input"/>
 		</xsl:variable>
 		
-		<xsl:variable name="expectedDoc" as="document-node()+">
+		<xsl:variable name="expectedDocs" as="document-node()+">
 			<xsl:apply-templates select="t:output[@port = 'result']" mode="t:output"/>
 		</xsl:variable>
 		
-		<xsl:message>[XSLT] count($expectedDoc) =   <xsl:value-of select="count($expectedDoc)"/></xsl:message>
+<!--		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>-->
 		
-		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
+		<xsl:variable name="inputPorts" as="element()">
+			<hp:inputs>
+				<xsl:apply-templates select="t:input" mode="input-ports"/>
+			</hp:inputs>
+		</xsl:variable>
 		
-		<xsl:variable name="actualDoc" as="document-node()*">
-			<xsl:for-each select="saxon:transform($compiledTransform, $inputDoc)/element()">
+		<xsl:variable name="actualDocs" as="document-node()*">
+			
+			<xsl:sequence select="xproc:process($pipelineDoc, $inputPorts)"/>
+			
+			<!--<xsl:for-each select="saxon:transform($compiledTransform, $inputDocs)/element()">
 				<xsl:document>
 					<xsl:copy-of select="."/>
 				</xsl:document>
-			</xsl:for-each>
+			</xsl:for-each>-->
 		</xsl:variable>
 				
-		<xsl:message>[XSLT] count($actualDoc) =   <xsl:value-of select="count($actualDoc)"/></xsl:message>
-		
-		<xsl:if test="$MODE = 'debug'">
+		<!--<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/actual.xml">
-				<xsl:copy-of select="$actualDoc"/>
+				<xsl:copy-of select="$actualDocs"/>
 			</xsl:result-document>
-		</xsl:if>
+		</xsl:if>-->
 		
 		<xsl:choose>
-			<xsl:when test="deep-equal($actualDoc, $expectedDoc)">
+			<xsl:when test="deep-equal($actualDocs, $expectedDocs)">
 				<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
 					<title><xsl:value-of select="t:title"/></title>
 				</pass>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="$actualDoc" mode="t:failed">
+				<xsl:apply-templates select="$actualDocs" mode="t:failed">
 					<xsl:with-param name="href" select="$href" as="xs:string?"/>
 					<xsl:with-param name="title" select="t:title" as="xs:string"/>
-					<xsl:with-param name="expectedDoc" select="$expectedDoc" as="document-node()+"/>
-					<xsl:with-param name="actualDoc" select="$actualDoc" as="document-node()*"/>
+					<xsl:with-param name="expectedDocs" select="$expectedDocs" as="document-node()+"/>
+					<xsl:with-param name="actualDocs" select="$actualDocs" as="document-node()*"/>
 				</xsl:apply-templates>
 			</xsl:otherwise>
 			</xsl:choose>
+		
+<!--		<xsl:copy-of select="$actualDocs"/>-->
+	</xsl:template>
+	
+	
+	
+	
+	<!--  -->
+	<xsl:template match="t:input" mode="input-ports">
+		<xsl:element name="{upper-case(@port)}">
+			<xsl:copy-of select="*"/>
+		</xsl:element>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Expected document in a t:document. -->
+	<xsl:template match="t:input[@port = 'source']/t:document" mode="t:input">
+		<xsl:document>
+			<xsl:copy-of select="*"/>
+		</xsl:document>
+	</xsl:template>
+	
+	
+	
+	
+	<!-- Expected document. -->
+	<xsl:template match="t:input[@port = 'source'][not(t:document)]" mode="t:input">
+		<xsl:document>
+			<xsl:copy-of select="*"/>
+		</xsl:document>
 	</xsl:template>
 	
 	
@@ -162,14 +197,14 @@
 	
 	
 	
-	<!--  -->
+	<!-- Generate a fail when an hp:error message is encountered. -->
 	<xsl:template match="/hp:error" mode="t:failed" priority="1">
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="title" as="xs:string"/>
-		<xsl:param name="actualDoc" as="document-node()+"/>
+		<xsl:param name="actualDocs" as="document-node()+"/>
 		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
-			<error><xsl:value-of select="$actualDoc/hp:error/@code"/></error>
+			<error><xsl:value-of select="$actualDocs/hp:error/@code"/></error>
 			<message><xsl:value-of select="text()"/></message>
 		</fail>
 	</xsl:template>
@@ -177,19 +212,20 @@
 	
 	
 	
-	<!--  -->
+	<!-- Where the expected and actual documents don't match, generate a fail 
+		 and embedded the two documents as examples. -->
 	<xsl:template match="/*" mode="t:failed">
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="title" as="xs:string"/>
-		<xsl:param name="expectedDoc" as="document-node()+"/>
-		<xsl:param name="actualDoc" as="document-node()+"/>
+		<xsl:param name="expectedDocs" as="document-node()+"/>
+		<xsl:param name="actualDocs" as="document-node()+"/>
 		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
 			<expected>
-				<xsl:sequence select="for $doc in $expectedDoc return saxon:serialize($doc, 'escapedMarkup')"/>
+				<xsl:sequence select="for $doc in $expectedDocs return saxon:serialize($doc, 'escapedMarkup')"/>
 			</expected>
 			<actual>
-				<xsl:sequence select="for $doc in $expectedDoc return saxon:serialize($doc, 'escapedMarkup')"/>
+				<xsl:sequence select="for $doc in $actualDocs return saxon:serialize($doc, 'escapedMarkup')"/>
 			</actual>
 		</fail>
 	</xsl:template>

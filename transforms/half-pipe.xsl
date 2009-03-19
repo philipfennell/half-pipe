@@ -17,7 +17,9 @@
 	<xsl:output method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 			saxon:indent-spaces="4"/>
 	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
-			saxon:indent-spaces="4"/>
+		saxon:indent-spaces="4"/>
+	<xsl:output name="xml" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
+		saxon:indent-spaces="4"/>
 	
 	<xsl:param name="MODE" select="''" as="xs:string"/>
 	
@@ -70,5 +72,40 @@
 		
 		<xsl:copy-of select="$compiledPipeline"/>
 	</xsl:template>
+	
+	
+	
+	
+	<!-- Invokes the pipeline on the source port. -->
+	<xsl:function name="xproc:process" as="document-node()*">
+		<xsl:param name="pipelineDoc" as="document-node()"/>
+		<xsl:param name="inputPorts" as="element()"/>
+		
+		<!-- The source document(s). -->
+		<xsl:variable name="sourcePort" as="document-node()+">
+			<xsl:document>
+				<xsl:sequence select="$inputPorts/SOURCE/*"/>
+			</xsl:document>
+		</xsl:variable>
+		
+		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
+		<xsl:variable name="parameters" as="element()*">
+			<xsl:for-each select="$inputPorts/*[local-name() != 'SOURCE']">
+				<xsl:copy>
+					<xsl:copy-of select="saxon:serialize(*, 'xml')"/>
+				</xsl:copy>
+			</xsl:for-each>
+		</xsl:variable>
+		
+		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
+		
+		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
+		
+		<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
+			<xsl:document>
+				<xsl:copy-of select="."/>
+			</xsl:document>
+		</xsl:for-each>
+	</xsl:function>
 	
 </xsl:transform>
