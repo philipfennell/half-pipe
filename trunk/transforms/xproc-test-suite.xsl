@@ -76,7 +76,7 @@
 		
 		<test-report xmlns="http://xproc.org/ns/testreport">
 			<title>XProc Test Results for Half-pipe</title>
-			<date>2009-03-06T16:36:39</date>
+			<date><xsl:value-of select="current-dateTime()"/></date>
 			<processor>
 				<name>Half-pipe</name>
 				<vendor>Philip Fennell</vendor>
@@ -89,11 +89,6 @@
 			</processor>
 			<test-suite>
 				<title><xsl:value-of select="t:title"/></title>
-				
-				<xsl:message>[XSLT] implemented steps: <xsl:value-of select="$implementedSteps"/></xsl:message>
-				<xsl:message>[XSLT]step count = <xsl:value-of select="count($sortedTests)"/></xsl:message>
-				
-<!--				<xsl:sequence select="$sortedTests"/>-->
 				<xsl:apply-templates select="$sortedTests" mode="#current"/>
 			</test-suite>
 		</test-report>

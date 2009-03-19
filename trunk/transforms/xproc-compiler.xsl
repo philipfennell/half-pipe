@@ -228,7 +228,7 @@
 	<!-- Parameter input takes its content from the named parameter port. -->
 	<xsl:template match="p:input[@kind = 'parameter']" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="$PARAMETERS"/>
+			<XSLT:sequence select="$PARAMETERS/*"/>
 		</hp:input>
 	</xsl:template>
 	
@@ -244,8 +244,9 @@
 	<!--  -->
 	<xsl:template match="p:input" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="${upper-case(@port)}"/>
+			<XSLT:sequence select="saxon:parse(${upper-case(@port)})"/>
 		</hp:input>
+	
 	</xsl:template>
 	
 	
@@ -578,6 +579,7 @@
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
 			<XSLT:copy-of select="saxon:transform($compiledTransform, $input-source)"/>
+<!--			<XSLT:document><foo/></XSLT:document>-->
 		</XSLT:template>
 	</xsl:template>
 	
