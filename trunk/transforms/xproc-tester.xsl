@@ -64,25 +64,14 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<!-- Compile the expanded pipeline into an executable transform. -->
-<!--		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>-->
-		
-		<!--<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../../debug/compiledPipeline.xsl">
-				<xsl:copy-of select="$compiledPipeline"/>
-			</xsl:result-document>
-		</xsl:if>-->
-		
 		<!-- Marshal the input document(s) together -->
 		<xsl:variable name="inputDocs" as="document-node()*">
 			<xsl:apply-templates select="t:input[@port = 'source']" mode="t:input"/>
 		</xsl:variable>
 		
-		<xsl:variable name="expectedDocs" as="document-node()+">
+		<xsl:variable name="expectedDocs" as="document-node()*">
 			<xsl:apply-templates select="t:output[@port = 'result']" mode="t:output"/>
 		</xsl:variable>
-		
-<!--		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>-->
 		
 		<xsl:variable name="inputPorts" as="element()">
 			<hp:inputs>
@@ -91,39 +80,40 @@
 		</xsl:variable>
 		
 		<xsl:variable name="actualDocs" as="document-node()*">
-			
-			<xsl:sequence select="xproc:process($pipelineDoc, $inputPorts)"/>
-			
-			<!--<xsl:for-each select="saxon:transform($compiledTransform, $inputDocs)/element()">
-				<xsl:document>
-					<xsl:copy-of select="."/>
-				</xsl:document>
-			</xsl:for-each>-->
+			<xsl:sequence select="xproc:process($pipelineDoc, $inputPorts, $MODE)"/>
 		</xsl:variable>
 				
-		<!--<xsl:if test="$MODE = 'debug'">
+		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/actual.xml">
 				<xsl:copy-of select="$actualDocs"/>
 			</xsl:result-document>
-		</xsl:if>-->
+		</xsl:if>
 		
 		<xsl:choose>
-			<xsl:when test="deep-equal($actualDocs, $expectedDocs)">
+			<xsl:when test="@error = $actualDocs/hp:error/@code">
 				<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
 					<title><xsl:value-of select="t:title"/></title>
 				</pass>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="$actualDocs" mode="t:failed">
-					<xsl:with-param name="href" select="$href" as="xs:string?"/>
-					<xsl:with-param name="title" select="t:title" as="xs:string"/>
-					<xsl:with-param name="expectedDocs" select="$expectedDocs" as="document-node()+"/>
-					<xsl:with-param name="actualDocs" select="$actualDocs" as="document-node()*"/>
-				</xsl:apply-templates>
+				<xsl:choose>
+					<xsl:when test="deep-equal($actualDocs, $expectedDocs)">
+						<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
+							<title><xsl:value-of select="t:title"/></title>
+						</pass>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:apply-templates select="$actualDocs" mode="t:failed">
+							<xsl:with-param name="href" select="$href" as="xs:string?"/>
+							<xsl:with-param name="title" select="t:title" as="xs:string"/>
+							<xsl:with-param name="expectedDocs" select="$expectedDocs" as="document-node()+"/>
+							<xsl:with-param name="actualDocs" select="$actualDocs" as="document-node()*"/>
+						</xsl:apply-templates>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
-			</xsl:choose>
+		</xsl:choose>
 		
-<!--		<xsl:copy-of select="$actualDocs"/>-->
 	</xsl:template>
 	
 	
