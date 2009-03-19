@@ -578,8 +578,25 @@
 		<XSLT:template match="*" mode="{name()}-{@name}">
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
-			<XSLT:copy-of select="saxon:transform($compiledTransform, $input-source)"/>
-<!--			<XSLT:document><foo/></XSLT:document>-->
+			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+		</XSLT:template>
+	</xsl:template>
+	
+	
+	<!--  -->
+	<xsl:template match="xproc:xslt[@version]" mode="xproc:step">
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
+			<XSLT:choose>
+				
+				<XSLT:when test="number('{@version}') = number($input-stylesheet/xsl:*/@version)">
+					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
+					<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+				</XSLT:when>
+				<XSLT:otherwise>
+					<XSLT:copy-of select="hp:error('err:XC0038', 'XSLT Version {@version} is not supported')"/>
+				</XSLT:otherwise>
+			</XSLT:choose>
 		</XSLT:template>
 	</xsl:template>
 	
