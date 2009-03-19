@@ -43,7 +43,7 @@
 	<!-- Displays the error message for the passed error code on stdout and terminates the transformation. -->
 	<xsl:function name="hp:error" as="element()">
 		<xsl:param name="errorCode" as="xs:string"/>
-		<xsl:param name="arg" as="xs:string"/>
+		<xsl:param name="arg" as="xs:string*"/>
 		<xsl:variable name="errorMessage" select="concat($arg, ' - ', hp:getErrorMessage($errorCode))"/>
 		
 		<xsl:message terminate="no">[XProc][<xsl:value-of select="$errorCode"/>][FATAL] <xsl:value-of select="$errorMessage"/></xsl:message>
@@ -55,7 +55,7 @@
 	
 	<!-- Displays the error message on stdout and terminates the transformation. -->
 	<xsl:function name="t:error">
-		<xsl:param name="arg" as="xs:string"/>
+		<xsl:param name="arg" as="xs:string*"/>
 		<xsl:param name="message" as="xs:string"/>
 		
 		<xsl:message terminate="yes">[XProc][TestSuite][FATAL] <xsl:value-of select="$arg"/> - <xsl:value-of select="$message"/></xsl:message>
@@ -70,7 +70,7 @@
 		<xsl:variable name="errorCodesURI" select="'../docs/error-codes.xml'"/>
 		<xsl:variable name="errorCodesDoc" select="if (doc-available($errorCodesURI)) then doc($errorCodesURI) else ()" as="document-node()?"/>
 		
-		<xsl:value-of select="$errorCodesDoc//xhtml:dt[xhtml:code = $errorCode]/following-sibling::xhtml:dd[1]/xhtml:p[1]"/>
+		<xsl:value-of select="$errorCodesDoc//xhtml:dt[xhtml:code/text() = $errorCode]/following-sibling::xhtml:dd[1]/xhtml:p[1]"/>
 	</xsl:function>
 	
 	
