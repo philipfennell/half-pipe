@@ -80,6 +80,7 @@
 	<xsl:function name="xproc:process" as="document-node()*">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
 		<xsl:param name="inputPorts" as="element()"/>
+		<xsl:param name="mode" as="xs:string?"/>
 		
 		<!-- The source document(s). -->
 		<xsl:variable name="sourcePort" as="document-node()+">
@@ -98,6 +99,10 @@
 		</xsl:variable>
 		
 		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
+		
+		<xsl:if test="$mode = 'debug'">
+			<xsl:message select="$compiledPipeline"/>
+		</xsl:if>
 		
 		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
 		
