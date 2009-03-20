@@ -3,7 +3,7 @@
              xmlns:t="http://xproc.org/ns/testsuite"
              xmlns="http://xproc.org/ns/testreport">
     <title>XProc Test Results for Half-pipe</title>
-    <date>2009-03-06T16:36:39</date>
+    <date>2009-03-20T14:06:06.634Z</date>
     <processor>
         <name>Half-pipe</name>
         <vendor>Philip Fennell</vendor>
@@ -1263,25 +1263,22 @@
             <title>Test p:xinclude #003</title>
             <message>Not Supported</message>
         </fail>
-        <fail uri="http://tests.xproc.org/tests/required/xslt-001.xml">
+        <pass uri="http://tests.xproc.org/tests/required/xslt-001.xml">
             <title>Test xslt-001</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/xslt-002.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/xslt-002.xml">
             <title>Test xslt-002</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/xslt-003.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/xslt-003.xml">
             <title>Test xslt-003</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/xslt-004.xml">
+        </pass>
+        <pass uri="http://tests.xproc.org/tests/required/xslt-004.xml">
             <title>Test xsl-t004</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/xslt-005.xml">
+        </pass>
+        <fail uri="http://tests.xproc.org/tests/required/required/xslt-005.xml">
             <title>Test xsl-t005</title>
-            <message>Not Supported</message>
+            <error>err:HP0002</error>
+            <message>The p:xslt step option 'initial-mode' is not supported.</message>
         </fail>
         <fail uri="http://tests.xproc.org/tests/optional/err-c0033-001.xml">
             <title>Test for err:XC0033 - 001</title>
@@ -1517,18 +1514,6 @@
         </fail>
         <fail uri="http://tests.xproc.org/tests/optional/xsl-formatter-001.xml">
             <title>Test XSL Formatter #001</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/optional/xslt2-001.xml">
-            <title>Test XSLT 2.0 #001</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/optional/xslt2-002.xml">
-            <title>Test XSLT 2.0 #002</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/optional/xslt2-003.xml">
-            <title>Test XSLT 2.0 #003</title>
             <message>Not Supported</message>
         </fail>
         <fail uri="http://tests.xproc.org/tests/extension/unimpl-001.xml">
