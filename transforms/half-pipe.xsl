@@ -44,34 +44,39 @@
 	
 	
 	
-	<xsl:template match="/">
-		<!-- Expand the pipeline to its full canonical form. -->
-		<xsl:variable name="parsedPipeline" as="document-node()">
+	<xsl:template match="/" mode="xproc:process">
+		<xsl:param name="inputPorts" as="element()"/>
+		<xsl:param name="mode" as="xs:string?"/>
+		
+		<!-- The source document(s). -->
+		<xsl:variable name="sourcePort" as="document-node()+">
 			<xsl:document>
-				<xsl:apply-templates select="*" mode="xproc:parse"/>
+				<xsl:sequence select="$inputPorts/SOURCE/*"/>
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/expandedPipeline.xml">
-				<xsl:copy-of select="$parsedPipeline"/>
-			</xsl:result-document>
-		</xsl:if>
-		
-		<!-- Compile the expanded pipeline into an executable transform. -->
-		<xsl:variable name="compiledPipeline" as="document-node()">
-			<xsl:document>
-				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
-			</xsl:document>
+		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
+		<xsl:variable name="parameters" as="element()*">
+			<xsl:for-each select="$inputPorts/*[local-name() != 'SOURCE']">
+				<xsl:copy>
+					<xsl:copy-of select="saxon:serialize(*, 'xml')"/>
+				</xsl:copy>
+			</xsl:for-each>
 		</xsl:variable>
 		
-		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
-				<xsl:copy-of select="$compiledPipeline"/>
-			</xsl:result-document>
+		<xsl:variable name="compiledPipeline" select="xproc:compile(.)" as="document-node()"/>
+		
+		<xsl:if test="$mode = 'debug'">
+			<xsl:message select="$compiledPipeline"/>
 		</xsl:if>
 		
-		<xsl:copy-of select="$compiledPipeline"/>
+		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
+		
+		<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
+			<xsl:document>
+				<xsl:copy-of select="."/>
+			</xsl:document>
+		</xsl:for-each>
 	</xsl:template>
 	
 	
