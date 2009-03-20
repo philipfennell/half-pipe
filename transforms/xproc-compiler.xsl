@@ -288,9 +288,7 @@
 					
 					<hp:output port="result">
 						<XSLT:apply-templates select="$input-source" mode="{name()}-{@name}">
-							<xsl:for-each select="xproc:input">
-								<XSLT:with-param name="input-{@port}" select="$input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
-							</xsl:for-each>
+							<xsl:apply-templates select="." mode="xproc:pipe-output"/>
 						</XSLT:apply-templates>
 					</hp:output>
 					
@@ -310,15 +308,15 @@
 	
 	
 	<!-- Generate input port(s) that definine inline, document or pipe sources. -->
-	<!--<xsl:template match="xproc:input[@port = 'stylesheet'][*]" mode="xproc:pipe-input" priority="2">
+	<xsl:template match="xproc:input[@port = 'stylesheet'][*]" mode="xproc:pipe-input" priority="2">
 		<xsl:apply-templates select="*" mode="xproc:port-stylesheet"/>
-	</xsl:template>-->
+	</xsl:template>
 	
 	
 	<!-- Copy the in-line stylesheet. -->
-	<!--<xsl:template match="xproc:inline" mode="xproc:port-stylesheet">
-		<xsl:comment><xsl:copy-of select="*"/></xsl:comment>
-	</xsl:template>-->
+	<xsl:template match="xproc:inline" mode="xproc:port-stylesheet">
+		<xsl:copy-of select="hp:embedStylesheet(*)"/>
+	</xsl:template>
 	
 	
 	<!-- Generate input port(s) that definine inline, document or pipe sources. -->
@@ -357,7 +355,7 @@
 	
 	
 	<!-- Generate code to retrieve the referenced XML document at run-time. -->
-	<xsl:template match="xproc:document" mode="xproc:pipe-input">
+	<xsl:template match="xproc:document" mode="xproc:pipe-input xproc:port-stylesheet">
 		<XSLT:variable name="resourceURI" select="resolve-uri(xs:anyURI('{@href}'))" as="xs:anyURI"/>
 		<XSLT:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
 	</xsl:template>
@@ -373,7 +371,7 @@
 	
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
-	<xsl:template match="xproc:pipe" mode="xproc:pipe-input">
+	<xsl:template match="xproc:pipe" mode="xproc:pipe-input xproc:port-stylesheet">
 		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
 	</xsl:template>
 	
@@ -381,6 +379,18 @@
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
 		<XSLT:sequence select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
+	</xsl:template>
+	
+	
+	<!--  -->
+	<xsl:template match="xproc:input[@port = 'stylesheet'][xproc:inline]" mode="xproc:pipe-output" priority="2">
+		<XSLT:with-param name="input-{@port}" select="hp:extractStylesheet($input-{@port})" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
+	</xsl:template>
+	
+	
+	<!--  -->
+	<xsl:template match="xproc:input" mode="xproc:pipe-output">
+		<XSLT:with-param name="input-{@port}" select="$input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
 	</xsl:template>
 	
 	

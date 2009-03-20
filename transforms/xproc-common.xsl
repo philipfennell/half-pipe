@@ -29,6 +29,53 @@
 	
 	
 	
+	<!-- Returns an XSLT transform with a new namespace to allow it to be 
+		embedded in the result transform. -->
+	<xsl:function name="hp:embedStylesheet" as="element()">
+		<xsl:param name="stylesheetDoc" as="element()"/>
+		<xsl:apply-templates select="$stylesheetDoc" mode="hp:changeNS">
+			<xsl:with-param name="sourceNS" select="'http://www.w3.org/1999/XSL/Transform'" as="xs:string" tunnel="yes"/>
+			<xsl:with-param name="targetNS" select="'http://www.w3.org/1999/XSL/Transform/embedded'" as="xs:string" tunnel="yes"/>
+		</xsl:apply-templates>
+	</xsl:function>
+	
+	<!-- Returns an embedded XSLT transform in its correct namespace.  -->
+	<xsl:function name="hp:extractStylesheet" as="document-node()">
+		<xsl:param name="stylesheet" as="document-node()"/>
+		
+		<xsl:document>
+			<xsl:apply-templates select="$stylesheet" mode="hp:changeNS">
+				<xsl:with-param name="sourceNS" select="'http://www.w3.org/1999/XSL/Transform/embedded'" as="xs:string" tunnel="yes"/>
+				<xsl:with-param name="targetNS" select="'http://www.w3.org/1999/XSL/Transform'" as="xs:string" tunnel="yes"/>
+			</xsl:apply-templates>
+		</xsl:document>
+	</xsl:function>
+	
+	<!-- Changes a document fragments elements that match the source namespace 
+		to the target namespace. -->
+	<xsl:template match="*" mode="hp:changeNS">
+		<xsl:param name="sourceNS" as="xs:string" tunnel="yes"/>
+		<xsl:param name="targetNS" as="xs:string" tunnel="yes"/>
+		
+		<xsl:choose>
+			<xsl:when test="namespace-uri() = $sourceNS">
+				<xsl:element name="{local-name()}" namespace="{$targetNS}">
+					<xsl:copy-of select="@*"/>
+					<xsl:apply-templates select="* | text()" mode="#current"/>
+				</xsl:element>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:copy>
+					<xsl:copy-of select="@*" copy-namespaces="no"/>
+					<xsl:apply-templates select="* | text()" mode="#current"/>
+				</xsl:copy>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	
+	
+	
 	
 	
 	<!-- Returns the parent directory URI. -->
