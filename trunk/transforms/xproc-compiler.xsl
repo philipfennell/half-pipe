@@ -248,7 +248,6 @@
 		<hp:input port="{@port}">
 			<XSLT:sequence select="saxon:parse(${upper-case(@port)})"/>
 		</hp:input>
-	
 	</xsl:template>
 	
 	
@@ -308,6 +307,18 @@
 	</xsl:template>
 	
 	
+	
+	
+	<!-- Generate input port(s) that definine inline, document or pipe sources. -->
+	<!--<xsl:template match="xproc:input[@port = 'stylesheet'][*]" mode="xproc:pipe-input" priority="2">
+		<xsl:apply-templates select="*" mode="xproc:port-stylesheet"/>
+	</xsl:template>-->
+	
+	
+	<!-- Copy the in-line stylesheet. -->
+	<!--<xsl:template match="xproc:inline" mode="xproc:port-stylesheet">
+		<xsl:comment><xsl:copy-of select="*"/></xsl:comment>
+	</xsl:template>-->
 	
 	
 	<!-- Generate input port(s) that definine inline, document or pipe sources. -->
@@ -573,21 +584,17 @@
 	</xsl:template>
 	
 	
-	
-	
 	<!--  -->
-	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="false">
-		<XSLT:template match="*" mode="{name()}-{@name}">
-			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
-			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
-			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+	<xsl:template match="xproc:xslt[@initial-mode]" mode="xproc:step">
+		<XSLT:template match="/" mode="{name()}-{@name}">
+			<err:HP0002>The <xsl:value-of select="name()"/> step option 'initial-mode' is not supported.</err:HP0002>
 		</XSLT:template>
 	</xsl:template>
 	
 	
 	<!--  -->
 	<xsl:template match="xproc:xslt[@version]" mode="xproc:step">
-		<XSLT:template match="*" mode="{name()}-{@name}">
+		<XSLT:template match="/" mode="{name()}-{@name}">
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 			<XSLT:choose>
 				
@@ -605,6 +612,18 @@
 	
 	
 	
+	<!--  -->
+	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="true">
+		<XSLT:template match="/" mode="{name()}-{@name}">
+			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
+			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
+			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+		</XSLT:template>
+	</xsl:template>
+	
+	
+	
+	
 	<!-- Guard template, creates an identity transform that allows the step to 
 		 have no effect on the input. Basically, the step is ignored if it is 
 		 not supported. -->
@@ -612,7 +631,7 @@
 		<xsl:message>[XProc][Compiler] Step '<xsl:value-of select="saxon:path()"/>' is not supported. It will be ignored at run-time.</xsl:message>
 		
 		<XSLT:template match="/" mode="{name()}-{@name}">
-			<err:XS0044>The step '<xsl:value-of select="name()"/>' is not supported.</err:XS0044>
+			<err:HP0001>The step '<xsl:value-of select="name()"/>' is not supported.</err:HP0001>
 		</XSLT:template>
 	</xsl:template>
 	
