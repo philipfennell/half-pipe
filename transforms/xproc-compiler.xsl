@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform
+		xmlns:err="http://www.w3.org/ns/xproc-error"
 		xmlns:hp="http://code.google.com/p/half-pipe/"
 		xmlns:p="http://www.w3.org/ns/xproc"
 		xmlns:saxon="http://saxon.sf.net/"
@@ -97,6 +98,7 @@
 		<XSLT:transform version="2.0">
 			<xsl:variable name="contextNode" select="*"/>
 			
+			<xsl:namespace name="err" select="'http://www.w3.org/ns/xproc-error'"/>
 			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
 			<xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
 			
