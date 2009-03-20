@@ -48,7 +48,7 @@
 		<xsl:variable name="errorMessage" select="concat($arg, ' - ', hp:getErrorMessage($errorCode))"/>
 		
 		<xsl:message terminate="no">[XProc][<xsl:value-of select="$errorCode"/>][FATAL] <xsl:value-of select="$errorMessage"/></xsl:message>
-		<hp:error code="{$errorCode}"><xsl:value-of select="$errorMessage"/></hp:error>
+		<xsl:element name="{$errorCode}" namespace="http://www.w3.org/ns/xproc-error"><xsl:value-of select="$errorMessage"/></xsl:element>
 	</xsl:function>
 	
 	

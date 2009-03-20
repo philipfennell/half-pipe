@@ -85,12 +85,12 @@
 				
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/actual.xml">
-				<xsl:copy-of select="$actualDocs"/>
+				<xsl:copy-of select="$actualDocs" copy-namespaces="no"/>
 			</xsl:result-document>
 		</xsl:if>
 		
 		<xsl:choose>
-			<xsl:when test="@error = $actualDocs/hp:error/@code">
+			<xsl:when test="@error = name($actualDocs/*)">
 				<pass xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/{$href}">
 					<title><xsl:value-of select="t:title"/></title>
 				</pass>
@@ -188,13 +188,13 @@
 	
 	
 	<!-- Generate a fail when an hp:error message is encountered. -->
-	<xsl:template match="/hp:error" mode="t:failed" priority="1">
+	<xsl:template match="/err:*" mode="t:failed" priority="1">
 		<xsl:param name="href" as="xs:string?"/>
 		<xsl:param name="title" as="xs:string"/>
 		<xsl:param name="actualDocs" as="document-node()+"/>
 		<fail xmlns="http://xproc.org/ns/testreport" uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
-			<error><xsl:value-of select="$actualDocs/hp:error/@code"/></error>
+			<error><xsl:value-of select="name($actualDocs/*)"/></error>
 			<message><xsl:value-of select="text()"/></message>
 		</fail>
 	</xsl:template>

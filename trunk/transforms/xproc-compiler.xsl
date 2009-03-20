@@ -129,9 +129,9 @@
 					<dcterms:creator>Half-pipe</dcterms:creator>
 					<dcterms:created><xsl:value-of select="current-dateTime()"/></dcterms:created>
 					<dcterms:format>application/xslt+xml</dcterms:format>
-					<dcterms:title><xsl:value-of select="/p:pipeline/@name"/></dcterms:title>
+					<dcterms:title><xsl:value-of select="/p:*/@name"/></dcterms:title>
 					<dcterms:description>Compiled transform that implements its source pipeline.</dcterms:description>
-					<!--<dcterms:source rdf:resource="{resolve-uri(base-uri(*))}"/>-->
+					<!--<dcterms:source rdf:resource="{resolve-uri(base-uri(.))}"/>-->
 				</rdf:Description>
 			</rdf:RDF>
 			
@@ -417,7 +417,7 @@
 	
 	<!-- Catch-all to ensure errors propergate through the pipeline to the end. -->
 	<xsl:template match="xproc:*" mode="xproc:step" priority="10">
-		<XSLT:template match="hp:error" mode="{name()}-{@name}" priority="10">
+		<XSLT:template match="err:*" mode="{name()}-{@name}" priority="10">
 			<XSLT:copy-of select="."/>
 		</XSLT:template>
 		
@@ -612,7 +612,7 @@
 		<xsl:message>[XProc][Compiler] Step '<xsl:value-of select="saxon:path()"/>' is not supported. It will be ignored at run-time.</xsl:message>
 		
 		<XSLT:template match="/" mode="{name()}-{@name}">
-			<hp:error>The step '<xsl:value-of select="name()"/>' is not supported.</hp:error>
+			<err:XS0044>The step '<xsl:value-of select="name()"/>' is not supported.</err:XS0044>
 		</XSLT:template>
 	</xsl:template>
 	
