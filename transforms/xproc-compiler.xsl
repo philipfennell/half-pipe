@@ -594,7 +594,15 @@
 	</xsl:template>
 	
 	
-	<!--  -->
+	<!-- The 'template-name' option is not supported. -->
+	<xsl:template match="xproc:xslt[@template-name]" mode="xproc:step">
+		<XSLT:template match="/" mode="{name()}-{@name}">
+			<err:HP0002>The <xsl:value-of select="name()"/> step option 'template-name' is not supported.</err:HP0002>
+		</XSLT:template>
+	</xsl:template>
+	
+	
+	<!-- The 'initial-mode' option is not supported. -->
 	<xsl:template match="xproc:xslt[@initial-mode]" mode="xproc:step">
 		<XSLT:template match="/" mode="{name()}-{@name}">
 			<err:HP0002>The <xsl:value-of select="name()"/> step option 'initial-mode' is not supported.</err:HP0002>
