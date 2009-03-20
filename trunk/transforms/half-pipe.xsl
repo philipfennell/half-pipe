@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform
+		xmlns:err="http://www.w3.org/ns/xproc-error"
 		xmlns:hp="http://code.google.com/p/half-pipe/"
 		xmlns:p="http://www.w3.org/ns/xproc"
 		xmlns:saxon="http://saxon.sf.net/"
