@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform
+		xmlns:c="http://www.w3.org/ns/xproc-step"
 		xmlns:err="http://www.w3.org/ns/xproc-error"
 		xmlns:hp="http://code.google.com/p/half-pipe/"
 		xmlns:p="http://www.w3.org/ns/xproc"
@@ -79,13 +80,22 @@
 			</hp:inputs>
 		</xsl:variable>
 		
-		<xsl:variable name="actualDocs" as="document-node()*">
+		<xsl:variable name="job-bag" as="element()">
 			<xsl:sequence select="xproc:process($pipelineDoc, $inputPorts, $MODE)"/>
+		</xsl:variable>
+		
+		<xsl:variable name="actualDocs" as="document-node()*">
+			<xsl:for-each select="$job-bag/hp:results/hp:result">
+				<xsl:document>
+					<xsl:copy-of select="*"/>
+				</xsl:document>
+			</xsl:for-each>
+			<!--<xsl:sequence select="xproc:process($pipelineDoc, $inputPorts, $MODE)"/>-->
 		</xsl:variable>
 				
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../../debug/actual.xml">
-				<xsl:copy-of select="$actualDocs" copy-namespaces="no"/>
+				<xsl:copy-of select="$job-bag/hp:results" copy-namespaces="no"/>
 			</xsl:result-document>
 		</xsl:if>
 		

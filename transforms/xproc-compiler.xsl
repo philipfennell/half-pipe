@@ -44,13 +44,17 @@
 	
 	
 	<!-- Returns the compiled version of the passed XProc pipeline document. -->
-	<xsl:function name="xproc:compile" as="document-node()">
+	<xsl:function name="xproc:compile" as="element()*">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
-		<!-- Might want a mode parameter. -->
+		<xsl:param name="mode" as="xs:string?"/>
+		<xsl:variable name="parsedPipeline" select="xproc:parse($pipelineDoc)" as="element()"/>
 		
-		<xsl:document>
-			<xsl:apply-templates select="xproc:parse($pipelineDoc)" mode="xproc:compile"/>
-		</xsl:document>
+		<hp:job-bag>
+			<xsl:copy-of select="$parsedPipeline"/>
+			<hp:compiled-pipeline>
+				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
+			</hp:compiled-pipeline>
+		</hp:job-bag>
 	</xsl:function>
 	
 	
@@ -59,28 +63,26 @@
 	<!-- Driver template. -->
 	<xsl:template match="/">
 		<!-- Expand the pipeline to its full canonical form. -->
-		<xsl:variable name="parsedPipeline" as="document-node()">
-			<xsl:document>
-				<xsl:apply-templates select="/" mode="xproc:parse"/>
-			</xsl:document>
+		<xsl:variable name="parsedPipeline" as="element()">
+			<xsl:apply-templates select="/" mode="xproc:parse"/>
 		</xsl:variable>
 		
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../debug/expandedPipeline.xml">
-				<xsl:copy-of select="$parsedPipeline"/>
+				<xsl:copy-of select="$parsedPipeline/*"/>
 			</xsl:result-document>
 		</xsl:if>
 		
 		<!-- Compile the expanded pipeline into an executable transform. -->
-		<xsl:variable name="compiledPipeline" as="document-node()">
-			<xsl:document>
+		<xsl:variable name="compiledPipeline" as="element()">
+			<hp:compiled-pipeline>
 				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
-			</xsl:document>
+			</hp:compiled-pipeline>
 		</xsl:variable>
 		
 		<xsl:if test="$MODE = 'debug'">
 			<xsl:result-document format="debug" href="../debug/compiledPipeline.xsl">
-				<xsl:copy-of select="$compiledPipeline"/>
+				<xsl:copy-of select="$compiledPipeline/*"/>
 			</xsl:result-document>
 		</xsl:if>
 		
@@ -94,7 +96,7 @@
 	
 	<!-- === Pipeline Compilation (xproc:compile). ========================= -->
 	
-	<xsl:template match="/" mode="xproc:compile">
+	<xsl:template match="hp:parsed-pipeline" mode="xproc:compile">
 		<XSLT:transform version="2.0">
 			<xsl:variable name="contextNode" select="*"/>
 			
@@ -118,7 +120,7 @@
 			<!-- Process the serialization definition.
 				 Note: this problem wont help much in this context as the host 
 				 XSLT will control the final serialization.-->
-			<xsl:apply-templates select="/*/xproc:serialization" mode="xproc:serialize"/>
+			<xsl:apply-templates select="xproc:serialization" mode="xproc:serialize"/>
 			
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="xproc:log"/>
 			<XSLT:output encoding="UTF-8" indent="yes" media-type="application/xml" method="xml" name="hp:debug"/>
@@ -129,7 +131,7 @@
 					<dcterms:creator>Half-pipe</dcterms:creator>
 					<dcterms:created><xsl:value-of select="current-dateTime()"/></dcterms:created>
 					<dcterms:format>application/xslt+xml</dcterms:format>
-					<dcterms:title><xsl:value-of select="/p:*/@name"/></dcterms:title>
+					<dcterms:title><xsl:value-of select="p:declare-step/@name"/></dcterms:title>
 					<dcterms:description>Compiled transform that implements its source pipeline.</dcterms:description>
 					<!--<dcterms:source rdf:resource="{resolve-uri(base-uri(.))}"/>-->
 				</rdf:Description>
@@ -170,7 +172,7 @@
 	
 	
 	<!-- Creates the root template for the compiled transform. -->
-	<xsl:template match="xproc:pipeline | xproc:declare-step" mode="xproc:compile">
+	<xsl:template match="xproc:declare-step" mode="xproc:compile">
 			
 		<XSLT:variable name="{(@name, 'source')[1]}" as="document-node()" hp:input="source">
 			<XSLT:document>
@@ -294,11 +296,11 @@
 					
 					<!-- Insert xproc:log nodes, if required. -->
 					<xsl:if test="local-name() = 'log'">
-						<XSLT:apply-templates select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
+						<XSLT:apply-templates select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
 					</xsl:if>
 					
 					<!-- Copy los from the preceding step. -->
-					<XSLT:sequence select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:log"/>
+					<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:log"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
@@ -378,7 +380,7 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
-		<XSLT:sequence select="${(/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
+		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
 	</xsl:template>
 	
 	
