@@ -40,9 +40,8 @@
 	
 	
 	<!-- Returns the parsed version of the passed XProc pipeline document. -->
-	<xsl:function name="xproc:parse" as="document-node()">
+	<xsl:function name="xproc:parse" as="element()">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
-		<!-- Might want a mode parameter. -->
 		
 		<xsl:variable name="parse1" as="document-node()">
 			<xsl:document>
@@ -50,9 +49,7 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:document>
-			<xsl:apply-templates select="$parse1" mode="xproc:parse"/>
-		</xsl:document>
+		<xsl:apply-templates select="$parse1" mode="xproc:parse"/>
 	</xsl:function>
 	
 	
@@ -63,7 +60,9 @@
 		<xsl:variable name="parse1" as="element()">
 			<xsl:apply-templates select="*" mode="xproc:parse1"/>
 		</xsl:variable>
-		<xsl:apply-templates select="$parse1" mode="xproc:parse2"/>
+		<hp:parsed-pipeline>
+			<xsl:apply-templates select="$parse1" mode="xproc:parse2"/>
+		</hp:parsed-pipeline>
 	</xsl:template>
 	
 	

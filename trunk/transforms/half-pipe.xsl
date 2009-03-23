@@ -64,7 +64,7 @@
 			</xsl:for-each>
 		</xsl:variable>
 		
-		<xsl:variable name="compiledPipeline" select="xproc:compile(.)" as="document-node()"/>
+		<xsl:variable name="compiledPipeline" select="xproc:compile(., $mode)" as="element()*"/>
 		
 		<xsl:if test="$mode = 'debug'">
 			<xsl:message select="$compiledPipeline"/>
@@ -83,7 +83,7 @@
 	
 	
 	<!-- Invokes the pipeline on the source port. -->
-	<xsl:function name="xproc:process" as="document-node()*">
+	<xsl:function name="xproc:process" as="element()">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
 		<xsl:param name="inputPorts" as="element()"/>
 		<xsl:param name="mode" as="xs:string?"/>
@@ -104,19 +104,22 @@
 			</xsl:for-each>
 		</xsl:variable>
 		
-		<xsl:variable name="compiledPipeline" select="xproc:compile($pipelineDoc)" as="document-node()"/>
+		<xsl:variable name="compiledPipeline" as="element()*">
+			<xsl:copy-of select="xproc:compile($pipelineDoc, $mode)"/>
+		</xsl:variable>
 		
-		<xsl:if test="$mode = 'debug'">
-			<xsl:message select="$compiledPipeline"/>
-		</xsl:if>
+		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline/hp:compiled-pipeline)"/>
 		
-		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
-		
-		<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
-			<xsl:document>
-				<xsl:copy-of select="."/>
-			</xsl:document>
-		</xsl:for-each>
+		<hp:job-bag>
+			<xsl:copy-of select="$compiledPipeline/*"/>
+			<hp:results>
+				<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
+					<hp:result>
+						<xsl:copy-of select="."/>
+					</hp:result>
+				</xsl:for-each>
+			</hp:results>
+		</hp:job-bag>
 	</xsl:function>
 	
 </xsl:transform>
