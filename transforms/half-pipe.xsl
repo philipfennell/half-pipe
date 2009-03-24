@@ -44,43 +44,6 @@
 	
 	
 	
-	<xsl:template match="/" mode="xproc:process">
-		<xsl:param name="inputPorts" as="element()?"/>
-		<xsl:param name="mode" as="xs:string?"/>
-		
-		<!-- The source document(s). -->
-		<xsl:variable name="sourcePort" as="document-node()+">
-			<xsl:document>
-				<xsl:sequence select="($inputPorts/SOURCE/*, .)[1]"/>
-			</xsl:document>
-		</xsl:variable>
-		
-		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
-		<xsl:variable name="parameters" as="element()*">
-			<xsl:for-each select="$inputPorts/*[local-name() != 'SOURCE']">
-				<xsl:copy>
-					<xsl:copy-of select="saxon:serialize(*, 'xml')"/>
-				</xsl:copy>
-			</xsl:for-each>
-		</xsl:variable>
-		
-		<xsl:variable name="compiledPipeline" select="xproc:compile(., $mode)" as="element()*"/>
-		
-		<xsl:if test="$mode = 'debug'">
-			<xsl:message select="$compiledPipeline"/>
-		</xsl:if>
-		
-		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline)"/>
-		
-		<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
-			<xsl:document>
-				<xsl:copy-of select="."/>
-			</xsl:document>
-		</xsl:for-each>
-	</xsl:template>
-	
-	
-	
 	
 	<!-- Invokes the pipeline on the source port. -->
 	<xsl:function name="xproc:process" as="element()">
