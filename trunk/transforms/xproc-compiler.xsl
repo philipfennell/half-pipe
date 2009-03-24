@@ -50,7 +50,9 @@
 		<xsl:variable name="parsedPipeline" select="xproc:parse($pipelineDoc)" as="element()"/>
 		
 		<hp:job-bag>
-			<xsl:copy-of select="$parsedPipeline"/>
+			<xsl:if test="$mode = 'debug'">
+				<xsl:copy-of select="$parsedPipeline"/>
+			</xsl:if>
 			<hp:compiled-pipeline>
 				<xsl:apply-templates select="$parsedPipeline" mode="xproc:compile"/>
 			</hp:compiled-pipeline>
