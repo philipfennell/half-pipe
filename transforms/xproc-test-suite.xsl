@@ -118,7 +118,7 @@
 		<xsl:variable name="testDoc" select="t:testDocument(@href)" as="document-node()"/>
 		
 		<xsl:apply-templates select="$testDoc/t:test" mode="t:test">
-			<xsl:with-param name="href" select="@href" as="xs:string"/>
+			<xsl:with-param name="href" select="@href" as="xs:string" tunnel="yes"/>
 		</xsl:apply-templates>
 	</xsl:template>
 	

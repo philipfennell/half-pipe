@@ -45,13 +45,13 @@
 	
 	
 	<xsl:template match="/" mode="xproc:process">
-		<xsl:param name="inputPorts" as="element()"/>
+		<xsl:param name="inputPorts" as="element()?"/>
 		<xsl:param name="mode" as="xs:string?"/>
 		
 		<!-- The source document(s). -->
 		<xsl:variable name="sourcePort" as="document-node()+">
 			<xsl:document>
-				<xsl:sequence select="$inputPorts/SOURCE/*"/>
+				<xsl:sequence select="($inputPorts/SOURCE/*, .)[1]"/>
 			</xsl:document>
 		</xsl:variable>
 		
@@ -104,22 +104,59 @@
 			</xsl:for-each>
 		</xsl:variable>
 		
-		<xsl:variable name="compiledPipeline" as="element()*">
+		<xsl:variable name="compilerJobBag" as="element()">
 			<xsl:copy-of select="xproc:compile($pipelineDoc, $mode)"/>
 		</xsl:variable>
 		
-		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($compiledPipeline/hp:compiled-pipeline)"/>
-		
-		<hp:job-bag>
-			<xsl:copy-of select="$compiledPipeline/*"/>
-			<hp:results>
-				<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
-					<hp:result>
-						<xsl:copy-of select="."/>
-					</hp:result>
-				</xsl:for-each>
-			</hp:results>
-		</hp:job-bag>
+		<xsl:apply-templates select="$compilerJobBag" mode="hp:compiler_job-bag">
+			<xsl:with-param name="sourcePort" select="$sourcePort" as="document-node()+" tunnel="yes"/>
+			<xsl:with-param name="parameters" select="$parameters" as="element()*" tunnel="yes"/>
+			<xsl:with-param name="mode" select="$mode" as="xs:string?" tunnel="yes"/>
+		</xsl:apply-templates>
 	</xsl:function>
+	
+	
+	
+	
+	<!-- Copies the job-bag wrapper. -->
+	<xsl:template match="hp:job-bag" mode="hp:compiler_job-bag">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="*" mode="#current"/>
+		</xsl:copy>
+	</xsl:template>
+	
+	
+	<!-- If present, copies the parsed pipeline into the result. -->
+	<xsl:template match="hp:parsed-pipeline" mode="hp:compiler_job-bag">
+		<xsl:copy-of select="."/>
+	</xsl:template>
+	
+	
+	<!-- Inserts the result(s) of the pipeline into the job-bag and, if in debug
+		 mode it also copies the compiled pipeline. -->
+	<xsl:template match="hp:compiled-pipeline" mode="hp:compiler_job-bag">
+		<xsl:param name="sourcePort" as="document-node()+" tunnel="yes"/>
+		<xsl:param name="parameters" as="element()*" tunnel="yes"/>
+		<xsl:param name="mode" as="xs:string?" tunnel="yes"/>
+		<xsl:variable name="pipelineTransform" as="document-node()">
+			<xsl:document>
+				<xsl:copy-of select="*"/>
+			</xsl:document>
+		</xsl:variable>
+		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($pipelineTransform)"/>
+		
+		<xsl:if test="$mode = 'debug'">
+			<xsl:copy-of select="."/>
+		</xsl:if>
+		
+		<hp:results>
+			<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
+				<hp:result>
+					<xsl:copy-of select="."/>
+				</hp:result>
+			</xsl:for-each>
+		</hp:results>
+	</xsl:template>
 	
 </xsl:transform>
