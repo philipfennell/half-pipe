@@ -53,9 +53,11 @@
 		
 		<!-- The source document(s). -->
 		<xsl:variable name="sourcePort" as="document-node()+">
-			<xsl:document>
-				<xsl:sequence select="$inputPorts/SOURCE/*"/>
-			</xsl:document>
+			<xsl:for-each select="$inputPorts/SOURCE/*">
+				<xsl:document>
+					<xsl:copy-of select="."/>
+				</xsl:document>
+			</xsl:for-each>
 		</xsl:variable>
 		
 		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
