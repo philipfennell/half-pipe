@@ -143,6 +143,24 @@
 			
 			<!-- Start compiling the pipeline. -->
 			<xsl:apply-templates select="*" mode="#current"/>
+			
+			<XSLT:template match="/hp:documents" mode="#all" priority="1">
+				<XSLT:variable name="documents" as="document-node()*">
+					<XSLT:for-each select="hp:document">
+						<XSLT:document>
+							<XSLT:copy-of select="*"/>
+						</XSLT:document>
+					</XSLT:for-each>
+				</XSLT:variable>
+				<XSLT:copy>
+					<XSLT:copy-of select="@*"/>
+					<XSLT:for-each select="$documents">
+						<hp:document>
+							<XSLT:apply-templates select="." mode="#current"/>
+						</hp:document>
+					</XSLT:for-each>
+				</XSLT:copy>
+			</XSLT:template>
 		</XSLT:transform>
 	</xsl:template>
 	
