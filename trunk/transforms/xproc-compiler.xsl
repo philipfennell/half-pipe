@@ -83,13 +83,7 @@
 			</hp:compiled-pipeline>
 		</xsl:variable>
 		
-		<xsl:if test="$MODE = 'debug'">
-			<xsl:result-document format="debug" href="../debug/compiled-pipeline.xsl">
-				<xsl:copy-of select="$compiledPipeline/*"/>
-			</xsl:result-document>
-		</xsl:if>
-		
-		<xsl:copy-of select="$compiledPipeline"/>
+		<xsl:copy-of select="$compiledPipeline/*"/>
 	</xsl:template>
 	
 	
@@ -243,7 +237,7 @@
 	<!-- Source input port takes SOURCE port (parameter) or the document root as its content. -->
 	<xsl:template match="p:input[@port = 'source']" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="($SOURCE, /)[1]"/>
+			<XSLT:sequence select="($SOURCE, /*)[1]"/>
 		</hp:input>
 	</xsl:template>
 	
@@ -259,7 +253,7 @@
 	<!-- Result port takes source port as its content. -->
 	<xsl:template match="p:output" mode="xproc:pipe-ports">
 		<hp:output port="{@port}">
-			<XSLT:sequence select="($SOURCE, /)[1]"/>
+			<XSLT:sequence select="($SOURCE, /*)[1]"/>
 		</hp:output>
 	</xsl:template>
 	

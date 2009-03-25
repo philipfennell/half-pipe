@@ -52,12 +52,19 @@
 		<xsl:param name="mode" as="xs:string?"/>
 		
 		<!-- The source document(s). -->
-		<xsl:variable name="sourcePort" as="document-node()+">
-			<xsl:for-each select="$inputPorts/SOURCE/*">
+		<xsl:variable name="sourcePort" as="element()">
+			<!--<xsl:for-each select="$inputPorts/SOURCE/*">
 				<xsl:document>
 					<xsl:copy-of select="."/>
 				</xsl:document>
-			</xsl:for-each>
+				</xsl:for-each>-->
+			<hp:documents>
+				<xsl:for-each select="$inputPorts/SOURCE/*">
+					<hp:document>
+						<xsl:copy-of select="."/>
+					</hp:document>
+				</xsl:for-each>
+			</hp:documents>
 		</xsl:variable>
 		
 		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
@@ -74,7 +81,7 @@
 		</xsl:variable>
 		
 		<xsl:apply-templates select="$compilerJobBag" mode="hp:compiler_job-bag">
-			<xsl:with-param name="sourcePort" select="$sourcePort" as="document-node()+" tunnel="yes"/>
+			<xsl:with-param name="sourcePort" select="$sourcePort" as="element()" tunnel="yes"/>
 			<xsl:with-param name="parameters" select="$parameters" as="element()*" tunnel="yes"/>
 			<xsl:with-param name="mode" select="$mode" as="xs:string?" tunnel="yes"/>
 		</xsl:apply-templates>
@@ -101,7 +108,7 @@
 	<!-- Inserts the result(s) of the pipeline into the job-bag and, if in debug
 		 mode it also copies the compiled pipeline. -->
 	<xsl:template match="hp:compiled-pipeline" mode="hp:compiler_job-bag">
-		<xsl:param name="sourcePort" as="document-node()+" tunnel="yes"/>
+		<xsl:param name="sourcePort" as="element()" tunnel="yes"/>
 		<xsl:param name="parameters" as="element()*" tunnel="yes"/>
 		<xsl:param name="mode" as="xs:string?" tunnel="yes"/>
 		<xsl:variable name="pipelineTransform" as="document-node()">

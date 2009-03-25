@@ -49,7 +49,9 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<xsl:apply-templates select="$parse1" mode="xproc:parse"/>
+		<hp:parsed-pipeline>
+			<xsl:apply-templates select="$parse1" mode="xproc:parse2"/>
+		</hp:parsed-pipeline>
 	</xsl:function>
 	
 	
@@ -58,11 +60,38 @@
 	<!-- Generates the parsed version of the source XProc pipeline document. -->
 	<xsl:template match="/" mode="#default xproc:parse">
 		<xsl:variable name="parse1" as="element()">
-			<xsl:apply-templates select="*" mode="xproc:parse1"/>
+			<xsl:apply-templates select="." mode="xproc:parse1"/>
 		</xsl:variable>
 		<hp:parsed-pipeline>
 			<xsl:apply-templates select="$parse1" mode="xproc:parse2"/>
 		</hp:parsed-pipeline>
+	</xsl:template>
+	
+	
+	
+	
+	<!--  -->
+	<xsl:template match="/xproc:pipeline|/xproc:declare-step" mode="xproc:parse1">
+		<p:declare-step>
+			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
+			<xsl:namespace name="saxon" select="'http://saxon.sf.net/'"/>
+			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
+			<xsl:namespace name="xsl" select="'http://www.w3.org/1999/XSL/Transform'"/>
+			
+			<xsl:copy-of select="@*"/>
+			
+			<!-- Ensure source/result ports are declared. -->
+			<xsl:if test="not(xproc:input[@port = 'source'])">
+				<p:input port="source"/>
+			</xsl:if>
+			<xsl:if test="not(xproc:output[@port = 'result'])">
+				<p:output port="result"/>
+			</xsl:if>
+			
+			<xsl:apply-templates select="*" mode="#current">
+				<xsl:with-param name="baseURI" select="if (@xml:base) then resolve-uri(@xml:base, base-uri(root())) else base-uri(root())" as="xs:anyURI?" tunnel="yes"/>
+			</xsl:apply-templates>
+		</p:declare-step>
 	</xsl:template>
 	
 	
@@ -94,33 +123,6 @@
 			
 			<xsl:apply-templates select="* | text()" mode="#current"/>
 		</xsl:copy>
-	</xsl:template>
-	
-	
-	
-	
-	<!--  -->
-	<xsl:template match="/xproc:pipeline|/xproc:declare-step" mode="xproc:parse1">
-		<p:declare-step>
-			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
-			<xsl:namespace name="saxon" select="'http://saxon.sf.net/'"/>
-			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
-			<xsl:namespace name="xsl" select="'http://www.w3.org/1999/XSL/Transform'"/>
-			
-			<xsl:copy-of select="@*"/>
-			
-			<!-- Ensure source/result ports are declared. -->
-			<xsl:if test="not(xproc:input[@port = 'source'])">
-				<p:input port="source"/>
-			</xsl:if>
-			<xsl:if test="not(xproc:output[@port = 'result'])">
-				<p:output port="result"/>
-			</xsl:if>
-			
-			<xsl:apply-templates select="*" mode="#current">
-				<xsl:with-param name="baseURI" select="if (@xml:base) then resolve-uri(@xml:base, base-uri(root())) else base-uri(root())" as="xs:anyURI?" tunnel="yes"/>
-			</xsl:apply-templates>
-		</p:declare-step>
 	</xsl:template>
 	
 	

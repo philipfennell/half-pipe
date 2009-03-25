@@ -11,7 +11,7 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:XSLT="http://www.w3.org/1999/XSL/Transform/output"
-		exclude-result-prefixes="err hp saxon xhtml xproc xs xsl"
+		exclude-result-prefixes="err hp saxon t xhtml xproc xs xsl"
 		version="2.0">
 	
 	<xsl:import href="half-pipe.xsl"/>
@@ -65,12 +65,6 @@
 			</xsl:document>
 		</xsl:variable>
 		
-		<!-- Marshal the input document(s) together -->
-		<!--<xsl:variable name="inputDocs" as="document-node()*">
-			<xsl:apply-templates select="t:input[@port = 'source']" 
-					mode="t:input"/>
-		</xsl:variable>-->
-		
 		<xsl:variable name="expectedDocs" as="document-node()*">
 			<xsl:apply-templates select="t:output[@port = 'result']" 
 					mode="t:output"/>
@@ -113,10 +107,18 @@
 	
 	<!-- If present, write the parsed and compiled pipelines to the 'debug' 
 		 directory. -->
-	<xsl:template match="hp:parsed-pipeline | hp:compiled-pipeline" 
+	<xsl:template match="hp:parsed-pipeline" 
 			mode="hp:processor_job-bag">
 		<xsl:result-document format="debug" 
 				href="../../debug/{local-name()}.xml">
+			<xsl:copy-of select="*" copy-namespaces="no"/>
+		</xsl:result-document>
+	</xsl:template>
+	
+	<xsl:template match="hp:compiled-pipeline" 
+		mode="hp:processor_job-bag">
+		<xsl:result-document format="debug" 
+			href="../../debug/{local-name()}.xsl">
 			<xsl:copy-of select="*" copy-namespaces="no"/>
 		</xsl:result-document>
 	</xsl:template>
@@ -196,27 +198,6 @@
 	<xsl:template match="*" mode="input-ports">
 		<xsl:copy-of select="."/>
 	</xsl:template>
-	
-	
-	
-	
-	<!-- Expected document in a t:document. -->
-	<!--<xsl:template match="t:input[@port = 'source']/t:document" mode="t:input">
-		<xsl:document>
-			<xsl:copy-of select="*"/>
-		</xsl:document>
-	</xsl:template>-->
-	
-	
-	
-	
-	<!-- Expected document. -->
-	<!--<xsl:template match="t:input[@port = 'source'][not(t:document)]" 
-			mode="t:input">
-		<xsl:document>
-			<xsl:copy-of select="*"/>
-		</xsl:document>
-	</xsl:template>-->
 	
 	
 	
