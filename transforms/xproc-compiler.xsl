@@ -406,11 +406,11 @@
 	<!-- === Pipeline Steps. =============================================== -->
 	
 	
-	<xsl:template match="xproc:declare-step" mode="xproc:step">
+	<!--<xsl:template match="xproc:declare-step" mode="xproc:step">
 		<XSLT:template match="/" mode="{name()}-{@name}">
 			
 		</XSLT:template>
-	</xsl:template>
+	</xsl:template>-->
 	
 	
 	
