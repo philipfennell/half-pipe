@@ -66,10 +66,10 @@
 		</xsl:variable>
 		
 		<!-- Marshal the input document(s) together -->
-		<xsl:variable name="inputDocs" as="document-node()*">
+		<!--<xsl:variable name="inputDocs" as="document-node()*">
 			<xsl:apply-templates select="t:input[@port = 'source']" 
 					mode="t:input"/>
-		</xsl:variable>
+		</xsl:variable>-->
 		
 		<xsl:variable name="expectedDocs" as="document-node()*">
 			<xsl:apply-templates select="t:output[@port = 'result']" 
@@ -178,33 +178,45 @@
 	
 	
 	
-	<!--  -->
+	<!-- Creates a parameter wrapper for the documents on the port. -->
 	<xsl:template match="t:input" mode="input-ports">
 		<xsl:element name="{upper-case(@port)}">
-			<xsl:copy-of select="*"/>
+			<xsl:apply-templates select="*" mode="#current"/>
 		</xsl:element>
+	</xsl:template>
+	
+	
+	<!-- Copy the children of a t:document -->
+	<xsl:template match="t:document" mode="input-ports">
+		<xsl:copy-of select="*"/>
+	</xsl:template>
+	
+	
+	<!-- Copy the document -->
+	<xsl:template match="*" mode="input-ports">
+		<xsl:copy-of select="."/>
 	</xsl:template>
 	
 	
 	
 	
 	<!-- Expected document in a t:document. -->
-	<xsl:template match="t:input[@port = 'source']/t:document" mode="t:input">
+	<!--<xsl:template match="t:input[@port = 'source']/t:document" mode="t:input">
 		<xsl:document>
 			<xsl:copy-of select="*"/>
 		</xsl:document>
-	</xsl:template>
+	</xsl:template>-->
 	
 	
 	
 	
 	<!-- Expected document. -->
-	<xsl:template match="t:input[@port = 'source'][not(t:document)]" 
+	<!--<xsl:template match="t:input[@port = 'source'][not(t:document)]" 
 			mode="t:input">
 		<xsl:document>
 			<xsl:copy-of select="*"/>
 		</xsl:document>
-	</xsl:template>
+	</xsl:template>-->
 	
 	
 	
