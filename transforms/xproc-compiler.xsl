@@ -98,6 +98,7 @@
 			<xsl:variable name="contextNode" select="*"/>
 			
 			<xsl:namespace name="err" select="'http://www.w3.org/ns/xproc-error'"/>
+			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
 			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
 			<xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
 			
@@ -144,6 +145,7 @@
 			<!-- Start compiling the pipeline. -->
 			<xsl:apply-templates select="*" mode="#current"/>
 			
+			<!-- {for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')} -->
 			<XSLT:template match="/hp:documents" mode="#all" priority="1">
 				<XSLT:variable name="documents" as="document-node()*">
 					<XSLT:for-each select="hp:document">
@@ -152,14 +154,14 @@
 						</XSLT:document>
 					</XSLT:for-each>
 				</XSLT:variable>
-				<XSLT:copy>
-					<XSLT:copy-of select="@*"/>
+				<XSLT:message select="count($documents)"/>
+				<hp:documents>
 					<XSLT:for-each select="$documents">
 						<hp:document>
 							<XSLT:apply-templates select="." mode="#current"/>
 						</hp:document>
 					</XSLT:for-each>
-				</XSLT:copy>
+				</hp:documents>
 			</XSLT:template>
 		</XSLT:transform>
 	</xsl:template>
@@ -291,7 +293,9 @@
 				<xsl:for-each select="xproc:input">
 					<XSLT:variable name="input-{@port}" as="document-node(){hp:sequenceQualifier(.)}">
 						<XSLT:document>
-							<xsl:apply-templates select="." mode="xproc:pipe-input"/>
+							<hp:documents>
+								<xsl:apply-templates select="." mode="xproc:pipe-input"/>
+							</hp:documents>
 						</XSLT:document>
 					</XSLT:variable>
 				</xsl:for-each>
@@ -389,13 +393,13 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input xproc:port-stylesheet">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*/*"/>
 	</xsl:template>
 	
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
-		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
+		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*/*'}"/>
 	</xsl:template>
 	
 	

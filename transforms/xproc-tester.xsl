@@ -125,12 +125,12 @@
 	
 	
 	<!--  -->
-	<xsl:template match="hp:results" mode="hp:processor_job-bag">
+	<xsl:template match="hp:result" mode="hp:processor_job-bag">
 		<xsl:param name="href" as="xs:string?" tunnel="yes"/>
 		<xsl:param name="expectedDocs" as="document-node()*" tunnel="yes"/>
 		<xsl:param name="test" as="element()" tunnel="yes"/>
 		<xsl:variable name="actualDocs" as="document-node()*">
-			<xsl:for-each select="hp:result">
+			<xsl:for-each select="hp:documents/hp:document">
 				<xsl:document>
 					<xsl:copy-of select="*"/>
 				</xsl:document>
