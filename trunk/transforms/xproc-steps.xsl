@@ -271,7 +271,7 @@
 	
 	<!-- Wraps the context node in a container element. -->
 	<xsl:template match="xproc:wrap-sequence[@group-adjacent]" mode="xproc:step">
-		<XSLT:template match="/" mode="{name()}-{@name}">
+		<XSLT:template match="/hp:documents" mode="{name()}-{@name}">
 			<err:HP0002>The <xsl:value-of select="name()"/> step option 'group-adjacent' is not supported.</err:HP0002>
 		</XSLT:template>
 	</xsl:template>
@@ -279,7 +279,7 @@
 	
 	<!-- Wraps the context node in a container element. -->
 	<xsl:template match="xproc:wrap-sequence" mode="xproc:step" hp:implemented="true">
-		<XSLT:template match="/" mode="{name()}-{@name}">
+		<XSLT:template match="/hp:documents" mode="{name()}-{@name}">
 			<XSLT:element name="{@wrapper}">
 				<XSLT:copy-of select="." copy-namespaces="no"/>
 			</XSLT:element>
@@ -291,7 +291,7 @@
 	
 	<!-- Counts the number of documents in the source input sequence.  -->
 	<xsl:template match="xproc:count" mode="xproc:step" hp:implemented="false">
-		<XSLT:template match="/" mode="{name()}-{@name}">
+		<XSLT:template match="/hp:documents" mode="{name()}-{@name}">
 			<XSLT:param name="input-source" as="document-node()*"/>
 			<XSLT:variable name="limit" select="{if (@limit) then @limit else 0}" as="xs:integer"/>
 			<XSLT:variable name="count" select="count($input-source/*)" as="xs:integer"/>

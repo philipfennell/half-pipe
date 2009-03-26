@@ -23,6 +23,7 @@
 		saxon:indent-spaces="4"/>
 	
 	<xsl:param name="MODE" select="''" as="xs:string"/>
+	<xsl:param name="SRC" select="'../examples/test-doc.xml'" as="xs:string?"/>
 	
 	
 	<xsl:namespace-alias stylesheet-prefix="XSLT" result-prefix="xsl"/>
@@ -45,6 +46,22 @@
 	
 	
 	
+	<!--  -->
+	<xsl:template match="/">
+		<xsl:variable name="inputPorts" as="element()">
+			<hp:inputs>
+				<SOURCE>
+					<xsl:copy-of select="if (doc-available($SRC)) then doc($SRC) else hp:error('err:XD0002', $SRC)"/>
+				</SOURCE>
+			</hp:inputs>
+		</xsl:variable>
+		
+		<xsl:copy-of select="xproc:process(., $inputPorts, $MODE)"/>
+	</xsl:template>
+	
+	
+	
+	
 	<!-- Invokes the pipeline on the source port. -->
 	<xsl:function name="xproc:process" as="element()">
 		<xsl:param name="pipelineDoc" as="document-node()"/>
@@ -52,19 +69,16 @@
 		<xsl:param name="mode" as="xs:string?"/>
 		
 		<!-- The source document(s). -->
-		<xsl:variable name="sourcePort" as="element()">
-			<!--<xsl:for-each select="$inputPorts/SOURCE/*">
-				<xsl:document>
-					<xsl:copy-of select="."/>
-				</xsl:document>
-				</xsl:for-each>-->
-			<hp:documents>
-				<xsl:for-each select="$inputPorts/SOURCE/*">
-					<hp:document>
-						<xsl:copy-of select="."/>
-					</hp:document>
-				</xsl:for-each>
-			</hp:documents>
+		<xsl:variable name="sourcePort" as="document-node()">
+			<xsl:document>
+				<hp:documents>
+					<xsl:for-each select="$inputPorts/SOURCE/*">
+						<hp:document>
+							<xsl:copy-of select="."/>
+						</hp:document>
+					</xsl:for-each>
+				</hp:documents>
+			</xsl:document>
 		</xsl:variable>
 		
 		<!-- The other input ports e.g. parameter and/or stylesheet ports. -->
@@ -81,7 +95,7 @@
 		</xsl:variable>
 		
 		<xsl:apply-templates select="$compilerJobBag" mode="hp:compiler_job-bag">
-			<xsl:with-param name="sourcePort" select="$sourcePort" as="element()" tunnel="yes"/>
+			<xsl:with-param name="sourcePort" select="$sourcePort" as="document-node()" tunnel="yes"/>
 			<xsl:with-param name="parameters" select="$parameters" as="element()*" tunnel="yes"/>
 			<xsl:with-param name="mode" select="$mode" as="xs:string?" tunnel="yes"/>
 		</xsl:apply-templates>
@@ -108,7 +122,7 @@
 	<!-- Inserts the result(s) of the pipeline into the job-bag and, if in debug
 		 mode it also copies the compiled pipeline. -->
 	<xsl:template match="hp:compiled-pipeline" mode="hp:compiler_job-bag">
-		<xsl:param name="sourcePort" as="element()" tunnel="yes"/>
+		<xsl:param name="sourcePort" as="document-node()" tunnel="yes"/>
 		<xsl:param name="parameters" as="element()*" tunnel="yes"/>
 		<xsl:param name="mode" as="xs:string?" tunnel="yes"/>
 		<xsl:variable name="pipelineTransform" as="document-node()">
@@ -122,13 +136,16 @@
 			<xsl:copy-of select="."/>
 		</xsl:if>
 		
-		<hp:results>
+		<hp:result>
+			<xsl:copy-of select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()"/>
+		</hp:result>
+		<!--<hp:results>
 			<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
 				<hp:result>
 					<xsl:copy-of select="."/>
 				</hp:result>
 			</xsl:for-each>
-		</hp:results>
+		</hp:results>-->
 	</xsl:template>
 	
 </xsl:transform>
