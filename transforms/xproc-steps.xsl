@@ -261,8 +261,14 @@
 	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="true">
 		<XSLT:template match="/" mode="{name()}-{@name}">
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
-			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet/hp:document/*)"/>
+			<XSLT:variable name="stylesheetDoc">
+				<XSLT:document>
+					<XSLT:copy-of select="$input-stylesheet/hp:document/*"/>
+				</XSLT:document>
+			</XSLT:variable>
+			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($stylesheetDoc)"/>
 			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+			<!-- <XSLT:copy-of select="$input-stylesheet/hp:document/*"/> -->
 		</XSLT:template>
 	</xsl:template>
 	

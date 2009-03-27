@@ -415,7 +415,9 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input xproc:port-stylesheet">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
+		<hp:document>
+			<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
+		</hp:document>
 	</xsl:template>
 	
 	
