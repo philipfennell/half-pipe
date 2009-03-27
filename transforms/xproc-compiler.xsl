@@ -145,23 +145,21 @@
 			<!-- Start compiling the pipeline. -->
 			<xsl:apply-templates select="*" mode="#current"/>
 			
-			<!-- {for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')} -->
-			<XSLT:template match="/hp:documents" mode="#all" priority="1">
+			<!-- #all -->
+			<XSLT:template match="/" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="1">
 				<XSLT:variable name="documents" as="document-node()*">
-					<XSLT:for-each select="hp:document">
+					<XSLT:for-each select="hp:documents/hp:document">
 						<XSLT:document>
 							<XSLT:copy-of select="*"/>
 						</XSLT:document>
 					</XSLT:for-each>
 				</XSLT:variable>
 				<XSLT:message select="count($documents)"/>
-				<hp:documents>
-					<XSLT:for-each select="$documents">
-						<hp:document>
-							<XSLT:apply-templates select="." mode="#current"/>
-						</hp:document>
-					</XSLT:for-each>
-				</hp:documents>
+				<XSLT:for-each select="$documents">
+					<hp:document>
+						<XSLT:apply-templates select="." mode="#current"/>
+					</hp:document>
+				</XSLT:for-each>
 			</XSLT:template>
 		</XSLT:transform>
 	</xsl:template>
@@ -191,7 +189,7 @@
 	<!-- Creates the root template for the compiled transform. -->
 	<xsl:template match="xproc:declare-step" mode="xproc:compile">
 			
-		<XSLT:variable name="{(@name, 'source')[1]}" as="document-node()" hp:input="source">
+		<XSLT:variable name="{@name}" as="document-node()" hp:input="source">
 			<XSLT:document>
 				<hp:job-bag>
 					<xsl:apply-templates select="(xproc:input, xproc:output)" mode="xproc:pipe-ports"/>
@@ -213,7 +211,7 @@
 			 If debug is on then write the final job-bag to the 'debug' directory.-->
 		<XSLT:template match="hp:job-bag" mode="xproc:result">
 			<xsl:if test="$MODE = 'debug'">
-				<XSLT:result-document href="../debug/job-bag.xml" format="hp:debug">
+				<XSLT:result-document href="debug/job-bag.xml" format="hp:debug">
 					<XSLT:sequence select="."/>
 				</XSLT:result-document>
 			</xsl:if>
@@ -223,9 +221,21 @@
 		</XSLT:template>
 		
 		<!-- Outputs the result of the named port to a URI. -->
-		<XSLT:template match="hp:job-bag/hp:log" mode="xproc:result">
+		<XSLT:template match="hp:log" mode="xproc:result">
 			<XSLT:result-document hp:port="{@name}" href="{{@href}}" format="xproc:log">
 				<XSLT:sequence select="*"/>
+			</XSLT:result-document>
+		</XSLT:template>
+		
+		<!-- Outputs the aggregated step results. -->
+		<XSLT:template match="hp:trace" mode="xproc:result">
+			<XSLT:result-document href="debug/trace.xml" format="xproc:log">
+				<XSLT:copy>
+					<XSLT:sequence select="*"/>
+					<hp:step name="result">
+						<XSLT:copy-of select="../hp:output/*"/>
+					</hp:step>
+				</XSLT:copy>
 			</XSLT:result-document>
 		</XSLT:template>
 		
@@ -257,7 +267,7 @@
 	<!-- Source input port takes SOURCE port (parameter) or the document root as its content. -->
 	<xsl:template match="p:input[@port = 'source']" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="($SOURCE, /*)[1]"/>
+			<XSLT:sequence select="($SOURCE, /hp:documents/*)[1]"/>
 		</hp:input>
 	</xsl:template>
 	
@@ -273,7 +283,7 @@
 	<!-- Result port takes source port as its content. -->
 	<xsl:template match="p:output" mode="xproc:pipe-ports">
 		<hp:output port="{@port}">
-			<XSLT:sequence select="($SOURCE, /*)[1]"/>
+			<XSLT:sequence select="($SOURCE, /hp:documents/*)[1]"/>
 		</hp:output>
 	</xsl:template>
 	
@@ -318,8 +328,16 @@
 						<XSLT:apply-templates select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = '{$inputPort}']/*" mode="{name()}-{@name}"/>
 					</xsl:if>
 					
-					<!-- Copy los from the preceding step. -->
-					<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:log"/>
+					<hp:trace>
+						<!-- Copy trace from the preceding step. -->
+						<XSLT:sequence select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:trace/*"/>
+						<hp:step name="{(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}">
+							<XSLT:copy-of select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:output[@port = 'result']/*"/>
+						</hp:step>
+					</hp:trace>
+					
+					<!-- Copy logs from the preceding step. -->
+					<XSLT:sequence select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:log"/>
 				</hp:job-bag>
 			</XSLT:document>
 		</XSLT:variable>
@@ -393,13 +411,13 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:pipe" mode="xproc:pipe-input xproc:port-stylesheet">
-		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*/*"/>
+		<XSLT:sequence select="${@step}/hp:job-bag/hp:*[@port = '{@port}']/*"/>
 	</xsl:template>
 	
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
-		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*/*'}"/>
+		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
 	</xsl:template>
 	
 	
