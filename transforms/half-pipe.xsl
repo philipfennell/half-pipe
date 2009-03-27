@@ -22,7 +22,7 @@
 	<xsl:output name="xml" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 		saxon:indent-spaces="4"/>
 	
-	<xsl:param name="MODE" select="''" as="xs:string"/>
+	<xsl:param name="MODE" select="'debug'" as="xs:string"/>
 	<xsl:param name="SRC" select="'../examples/test-doc.xml'" as="xs:string?"/>
 	
 	
