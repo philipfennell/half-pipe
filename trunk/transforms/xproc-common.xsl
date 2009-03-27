@@ -154,7 +154,7 @@
 		<xsl:param name="contextNode" as="element()"/>
 		<xsl:variable name="precedingStep" select="$contextNode/preceding-sibling::xproc:*[@hp:step][1]"/>
 		
-		<xsl:sequence select="if ($precedingStep) then $precedingStep/@name else 'source'"/>
+		<xsl:sequence select="if ($precedingStep) then $precedingStep/@name else $contextNode/ancestor::xproc:declare-step/@name"/>
 	</xsl:function>
 	
 	
