@@ -3,7 +3,7 @@
              xmlns:t="http://xproc.org/ns/testsuite"
              xmlns="http://xproc.org/ns/testreport">
     <title>XProc Test Results for Half-pipe</title>
-    <date>2009-03-20T14:06:06.634Z</date>
+    <date>2009-03-27T18:13:41.022Z</date>
     <processor>
         <name>Half-pipe</name>
         <vendor>Philip Fennell</vendor>
@@ -16,12 +16,31 @@
     </processor>
     <test-suite>
         <title>All tests</title>
-        <pass uri="http://tests.xproc.org/tests/required/add-attribute-001.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/add-attribute-001.xml">
             <title>Test p:add-attribute #001</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/add-attribute-002.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/add-attribute-002.xml">
             <title>Test p:add-attribute #002</title>
-        </pass>
+            <expected>
+                <document xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                          xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <title xmlns:test2="http://test.com" test2:foo="bar">Some Title</title>
+                    <para>Some paragraph.</para>
+                </document>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <document xmlns="">
+                        <title xmlns:test="http://test.com" test:foo="bar">Some Title</title>
+                        <para>Some paragraph.</para>
+                    </document>
+                </hp:document>
+            </actual>
+        </fail>
         <fail uri="http://tests.xproc.org/tests/required/add-xml-base-001.xml">
             <title>Test add-xml-base-001</title>
             <message>Not Supported</message>
@@ -138,13 +157,16 @@
             <title>Test p:declare-step-008</title>
             <message>Not Supported</message>
         </fail>
-        <pass uri="http://tests.xproc.org/tests/required/delete-001.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/delete-001.xml">
             <title>Test delete-001</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/delete-002.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/delete-002.xml">
             <title>Test delete-002</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/delete-003.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/delete-003.xml">
             <title>Test delete-003</title>
         </pass>
         <fail uri="http://tests.xproc.org/tests/required/directory-list-001.xml">
@@ -819,19 +841,233 @@
             <title>Test http-request #012</title>
             <message>Not Supported</message>
         </fail>
-        <pass uri="http://tests.xproc.org/tests/required/identity-001.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/identity-001.xml">
             <title>Test p:identity-step-001</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/identity-002.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/identity-002.xml">
             <title>Test p:identity-step-002</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/identity-003.xml">
-            <title>Test p:identity-step-002</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/identity-004.xml">
+            <expected>
+                <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                     xmlns:err="http://www.w3.org/ns/xproc-error"><?pi test?><p>This is a p.</p>
+                </doc>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <hp:document>
+                        <hp:document>
+                            <hp:document>
+                                <hp:document>
+                                    <hp:document>
+                                        <hp:document>
+                                            <hp:document>
+                                                <hp:document>
+                                                    <hp:document>
+                                                        <hp:document>
+                                                            <hp:document>
+                                                                <hp:document>
+                                                                    <hp:document>
+                                                                        <hp:document>
+                                                                            <hp:document>
+                                                                                <hp:document>
+                                                                                    <hp:document>
+                                                                                        <hp:document>
+                                                                                            <hp:document>
+                                                                                                <hp:document>
+                                                                                                    <hp:document>
+                                                                                                        <hp:document>
+                                                                                                            <hp:document>
+                                                                                                                <hp:document>
+                                                                                                                    <hp:document>
+                                                                                                                        <hp:document>
+                                                                                                                            <hp:document>
+                                                                                                                                <hp:document>
+                                                                                                                                    <hp:document>
+                                                                                                                                        <hp:document>
+                                                                                                                                            <hp:document>
+                                                                                                                                                <hp:document>
+                                                                                                                                                    <hp:document>
+                                                                                                                                                        <hp:document>
+                                                                                                                                                            <hp:document>
+                                                                                                                                                                <hp:document>
+                                                                                                                                                                    <hp:document>
+                                                                                                                                                                        <hp:document>
+                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                    <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                        <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                                <hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"><?pi test?><p>This is a p.</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </doc>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                                </hp:document>
+                                                                                                                                                                                            </hp:document>
+                                                                                                                                                                                        </hp:document>
+                                                                                                                                                                                    </hp:document>
+                                                                                                                                                                                </hp:document>
+                                                                                                                                                                            </hp:document>
+                                                                                                                                                                        </hp:document>
+                                                                                                                                                                    </hp:document>
+                                                                                                                                                                </hp:document>
+                                                                                                                                                            </hp:document>
+                                                                                                                                                        </hp:document>
+                                                                                                                                                    </hp:document>
+                                                                                                                                                </hp:document>
+                                                                                                                                            </hp:document>
+                                                                                                                                        </hp:document>
+                                                                                                                                    </hp:document>
+                                                                                                                                </hp:document>
+                                                                                                                            </hp:document>
+                                                                                                                        </hp:document>
+                                                                                                                    </hp:document>
+                                                                                                                </hp:document>
+                                                                                                            </hp:document>
+                                                                                                        </hp:document>
+                                                                                                    </hp:document>
+                                                                                                </hp:document>
+                                                                                            </hp:document>
+                                                                                        </hp:document>
+                                                                                    </hp:document>
+                                                                                </hp:document>
+                                                                            </hp:document>
+                                                                        </hp:document>
+                                                                    </hp:document>
+                                                                </hp:document>
+                                                            </hp:document>
+                                                        </hp:document>
+                                                    </hp:document>
+                                                </hp:document>
+                                            </hp:document>
+                                        </hp:document>
+                                    </hp:document>
+                                </hp:document>
+                            </hp:document>
+                        </hp:document>
+                    </hp:document>
+                </hp:document>
+            </actual>
+        </fail>
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/identity-004.xml">
             <title>Test p:identity-step-004</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/identity-005.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/identity-005.xml">
             <title>Test p:identity-step-005</title>
         </pass>
         <fail uri="http://tests.xproc.org/tests/required/import-001.xml">
@@ -846,37 +1082,155 @@
             <title>Test p:import #003</title>
             <message>Not Supported</message>
         </fail>
-        <pass uri="http://tests.xproc.org/tests/required/input-001.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/input-001.xml">
             <title>Test input-001</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/input-002.xml">
-            <title>Test input-002</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/input-003.xml">
+            <expected>
+                <step1_test xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                            xmlns:err="http://www.w3.org/ns/xproc-error"/>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <step1_test xmlns=""/>
+                </hp:document>
+            </actual>
+        </fail>
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/input-003.xml">
             <title>Test input-003</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/input-004.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/input-004.xml">
             <title>Test input-004</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/input-005.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/input-005.xml">
             <title>Test input-005</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-001.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/insert-001.xml">
             <title>Test p:insert #001</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-002.xml">
+            <expected>
+                <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                     xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <div>
+                        <p>New first paragraph</p>
+                        <p>First paragraph.</p>
+                        <p>Middle paragraph.</p>
+                        <p>Last paragraph.</p>
+                    </div>
+                </doc>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <doc xmlns="">
+                        <div>
+                            <p>New first paragraph</p>
+                            <p>First paragraph.</p>
+                            <p>Middle paragraph.</p>
+                            <p>Last paragraph.</p>
+                        </div>
+                    </doc>
+                </hp:document>
+            </actual>
+        </fail>
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/insert-002.xml">
             <title>Test p:insert #002</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-003.xml">
+            <expected>
+                <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                     xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <div>
+                        <p>First paragraph.</p>
+                        <p>Middle paragraph.</p>
+                        <p>Last paragraph.</p>
+                        <p>New last paragraph</p>
+                    </div>
+                </doc>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <doc xmlns="">
+                        <div>
+                            <p>First paragraph.</p>
+                            <p>Middle paragraph.</p>
+                            <p>Last paragraph.</p>
+                            <p>New last paragraph</p>
+                        </div>
+                    </doc>
+                </hp:document>
+            </actual>
+        </fail>
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/insert-003.xml">
             <title>Test p:insert #003</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-004.xml">
+            <expected>
+                <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                     xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <p>New before paragraph</p>
+                    <div>
+                        <p>First paragraph.</p>
+                        <p>Middle paragraph.</p>
+                        <p>Last paragraph.</p>
+                    </div>
+                </doc>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <doc xmlns="">
+                        <p>New before paragraph</p>
+                        <div>
+                            <p>First paragraph.</p>
+                            <p>Middle paragraph.</p>
+                            <p>Last paragraph.</p>
+                        </div>
+                    </doc>
+                </hp:document>
+            </actual>
+        </fail>
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/insert-004.xml">
             <title>Test p:insert #004</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-005.xml">
+            <expected>
+                <doc xmlns="" xmlns:p="http://www.w3.org/ns/xproc"
+                     xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <div>
+                        <p>First paragraph.</p>
+                        <p>Middle paragraph.</p>
+                        <p>Last paragraph.</p>
+                    </div>
+                    <p>New after paragraph</p>
+                </doc>
+            </expected>
+            <actual>
+                <hp:document xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                             xmlns:err="http://www.w3.org/ns/xproc-error"
+                             xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <doc xmlns="">
+                        <div>
+                            <p>First paragraph.</p>
+                            <p>Middle paragraph.</p>
+                            <p>Last paragraph.</p>
+                        </div>
+                        <p>New after paragraph</p>
+                    </doc>
+                </hp:document>
+            </actual>
+        </fail>
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/insert-005.xml">
             <title>Test insert-005</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/insert-006.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/insert-006.xml">
             <title>Test insert-006</title>
         </pass>
         <fail uri="http://tests.xproc.org/tests/required/iteration-001.xml">
@@ -1243,13 +1597,43 @@
             <title>Test for p:wrap #005</title>
             <message>Not Supported</message>
         </fail>
-        <fail uri="http://tests.xproc.org/tests/required/wrap-sequence-001.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/wrap-sequence-001.xml">
             <title>Test wrap-sequence-001</title>
-            <message>Not Supported</message>
-        </fail>
-        <fail uri="http://tests.xproc.org/tests/required/wrap-sequence-002.xml">
-            <title>Test wrap-sequence-002</title>
-            <message>Not Supported</message>
+            <expected>
+                <p:pipe-sequence xmlns:p="http://www.w3.org/ns/xproc" xmlns:err="http://www.w3.org/ns/xproc-error">
+                    <doc xmlns=""/>
+                    <doc xmlns=""/>
+                    <doc xmlns=""/>
+                    <doc xmlns=""/>
+                </p:pipe-sequence>
+            </expected>
+            <actual>
+                <p:pipe-sequence xmlns:p="http://www.w3.org/ns/xproc" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                 xmlns:err="http://www.w3.org/ns/xproc-error"
+                                 xmlns:hp="http://code.google.com/p/half-pipe/">
+                    <hp:document>
+                        <hp:document>
+                            <doc xmlns=""/>
+                        </hp:document>
+                    </hp:document>
+                    <hp:document>
+                        <hp:document>
+                            <doc xmlns=""/>
+                        </hp:document>
+                    </hp:document>
+                    <hp:document>
+                        <hp:document>
+                            <doc xmlns=""/>
+                        </hp:document>
+                    </hp:document>
+                    <hp:document>
+                        <hp:document>
+                            <doc xmlns=""/>
+                        </hp:document>
+                    </hp:document>
+                </p:pipe-sequence>
+            </actual>
         </fail>
         <fail uri="http://tests.xproc.org/tests/required/xinclude-001.xml">
             <title>Test p:xinclude #001</title>
@@ -1263,19 +1647,28 @@
             <title>Test p:xinclude #003</title>
             <message>Not Supported</message>
         </fail>
-        <pass uri="http://tests.xproc.org/tests/required/xslt-001.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/xslt-001.xml">
             <title>Test xslt-001</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/xslt-002.xml">
+        <pass xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/xslt-002.xml">
             <title>Test xslt-002</title>
         </pass>
-        <pass uri="http://tests.xproc.org/tests/required/xslt-003.xml">
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/xslt-003.xml">
             <title>Test xslt-003</title>
-        </pass>
-        <pass uri="http://tests.xproc.org/tests/required/xslt-004.xml">
+            <error>err:XC0038</error>
+            <message>XSLT Version 1.0 is not supported - It is a dynamic error if the specified version of XSLT is not available.</message>
+        </fail>
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/xslt-004.xml">
             <title>Test xsl-t004</title>
-        </pass>
-        <fail uri="http://tests.xproc.org/tests/required/required/xslt-005.xml">
+            <error>err:XC0038</error>
+            <message>XSLT Version 2.0 is not supported - It is a dynamic error if the specified version of XSLT is not available.</message>
+        </fail>
+        <fail xmlns:c="http://www.w3.org/ns/xproc-step"
+              uri="http://tests.xproc.org/tests/required/required/xslt-005.xml">
             <title>Test xsl-t005</title>
             <error>err:HP0002</error>
             <message>The p:xslt step option 'initial-mode' is not supported.</message>

@@ -41,7 +41,7 @@
 	
 	<!-- Returns an embedded XSLT transform in its correct namespace.  -->
 	<xsl:function name="hp:extractStylesheet" as="document-node()">
-		<xsl:param name="stylesheet" as="document-node()"/>
+		<xsl:param name="stylesheet" as="element()"/>
 		
 		<xsl:document>
 			<xsl:apply-templates select="$stylesheet" mode="hp:changeNS">
