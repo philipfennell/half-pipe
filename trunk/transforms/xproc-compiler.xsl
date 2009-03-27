@@ -101,6 +101,7 @@
 			<xsl:namespace name="hp" select="'http://code.google.com/p/half-pipe/'"/>
 			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
 			<xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
+			<xsl:namespace name="p" select="'http://www.w3.org/ns/xproc'"/>
 			
 			<!-- Add namespace declarations from the source pipeline. -->
 			<xsl:for-each select="in-scope-prefixes(*)">
@@ -146,15 +147,14 @@
 			<xsl:apply-templates select="*" mode="#current"/>
 			
 			<!-- #all -->
-			<XSLT:template match="/" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="1">
+			<XSLT:template match="hp:documents" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="1">
 				<XSLT:variable name="documents" as="document-node()*">
-					<XSLT:for-each select="hp:documents/hp:document">
+					<XSLT:for-each select="hp:document">
 						<XSLT:document>
 							<XSLT:copy-of select="*"/>
 						</XSLT:document>
 					</XSLT:for-each>
 				</XSLT:variable>
-				<XSLT:message select="count($documents)"/>
 				<XSLT:for-each select="$documents">
 					<hp:document>
 						<XSLT:apply-templates select="." mode="#current"/>
@@ -301,12 +301,10 @@
 			<XSLT:document>
 				
 				<xsl:for-each select="xproc:input">
-					<XSLT:variable name="input-{@port}" as="document-node(){hp:sequenceQualifier(.)}">
-						<XSLT:document>
-							<hp:documents>
-								<xsl:apply-templates select="." mode="xproc:pipe-input"/>
-							</hp:documents>
-						</XSLT:document>
+					<XSLT:variable name="input-{@port}" as="element(){hp:sequenceQualifier(.)}">
+						<hp:documents>
+							<xsl:apply-templates select="." mode="xproc:pipe-input"/>
+						</hp:documents>
 					</XSLT:variable>
 				</xsl:for-each>
 				
@@ -332,7 +330,7 @@
 						<!-- Copy trace from the preceding step. -->
 						<XSLT:sequence select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:trace/*"/>
 						<hp:step name="{(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}">
-							<XSLT:copy-of select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:output[@port = 'result']/*"/>
+							<XSLT:copy-of select="${(hp:precedingStepName(current()), ancestor::hp:parsed-pipeline[1]/*/@name)[1]}/hp:job-bag/hp:output[@port = 'result']"/>
 						</hp:step>
 					</hp:trace>
 					
@@ -354,7 +352,9 @@
 	
 	<!-- Copy the in-line stylesheet. -->
 	<xsl:template match="xproc:inline" mode="xproc:port-stylesheet">
-		<xsl:copy-of select="hp:embedStylesheet(*)"/>
+		<hp:document>
+			<xsl:copy-of select="hp:embedStylesheet(*)"/>
+		</hp:document>
 	</xsl:template>
 	
 	
@@ -370,7 +370,9 @@
 	
 	<!-- Copy the in-line content. -->
 	<xsl:template match="xproc:inline" mode="xproc:pipe-input">
-		<xsl:apply-templates select="* | text()" mode="xproc:inline"/>
+		<hp:document>
+			<xsl:apply-templates select="* | text()" mode="xproc:inline"/>
+		</hp:document>
 	</xsl:template>
 	
 	
@@ -396,7 +398,9 @@
 	<!-- Generate code to retrieve the referenced XML document at run-time. -->
 	<xsl:template match="xproc:document" mode="xproc:pipe-input xproc:port-stylesheet">
 		<XSLT:variable name="resourceURI" select="resolve-uri(xs:anyURI('{@href}'))" as="xs:anyURI"/>
-		<XSLT:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
+		<hp:document>
+			<XSLT:copy-of select="if (doc-available($resourceURI)) then doc($resourceURI) else hp:error('err:XD0002', $resourceURI)"/>
+		</hp:document>
 	</xsl:template>
 	
 	
@@ -429,7 +433,7 @@
 	
 	<!--  -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-output">
-		<XSLT:with-param name="input-{@port}" select="$input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
+		<XSLT:with-param name="input-{@port}" select="$input-{@port}" as="element(){hp:sequenceQualifier(.)}" tunnel="yes"/>
 	</xsl:template>
 	
 	

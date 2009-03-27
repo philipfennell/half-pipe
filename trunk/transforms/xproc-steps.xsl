@@ -45,7 +45,7 @@
 	
 	<!-- Creates input port parameters for step templates. -->
 	<xsl:template match="p:input" mode="xproc:step-inputs">
-		<XSLT:param name="input-{@port}" as="document-node(){hp:sequenceQualifier(.)}" tunnel="yes"/>
+		<XSLT:param name="input-{@port}" as="element(){hp:sequenceQualifier(.)}" tunnel="yes"/>
 	</xsl:template>
 	
 	
@@ -114,7 +114,7 @@
 		
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
-			<XSLT:sequence select="$input-insertion"/>
+			<XSLT:sequence select="for $doc in $input-insertion/hp:document return $doc/*"/>
 			<XSLT:apply-templates select="*|text()" mode="#current"/>
 		</XSLT:copy>
 	</xsl:template>
@@ -127,7 +127,7 @@
 		<XSLT:copy copy-namespaces="no">
 			<XSLT:copy-of select="@*"/>
 			<XSLT:apply-templates select="*|text()" mode="#current"/>
-			<XSLT:sequence select="$input-insertion"/>
+			<XSLT:sequence select="for $doc in $input-insertion/hp:document return $doc/*"/>
 		</XSLT:copy>
 	</xsl:template>
 	
@@ -136,7 +136,7 @@
 	<xsl:template match="xproc:insert[@position = 'before']" mode="xproc:step">
 		<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 		
-		<XSLT:sequence select="$input-insertion"/>
+		<XSLT:sequence select="for $doc in $input-insertion/hp:document return $doc/*"/>
 		<xsl:choose>
 			<xsl:when test="matches(@match, 'processing-instruction\(.*\)|comment\(\)')">
 				<XSLT:copy-of select="."/>
@@ -160,7 +160,7 @@
 				<xsl:call-template name="hp:deepCopy"/>
 			</xsl:otherwise>
 		</xsl:choose>
-		<XSLT:sequence select="$input-insertion"/>
+		<XSLT:sequence select="for $doc in $input-insertion/hp:document return $doc/*"/>
 	</xsl:template>
 	
 	
@@ -244,7 +244,7 @@
 			<XSLT:choose>
 				
 				<XSLT:when test="number('{@version}') = number($input-stylesheet/xsl:*/@version)">
-					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
+					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet/hp:document/*)"/>
 					<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
 				</XSLT:when>
 				<XSLT:otherwise>
@@ -261,7 +261,7 @@
 	<xsl:template match="xproc:xslt" mode="xproc:step" hp:implemented="true">
 		<XSLT:template match="/" mode="{name()}-{@name}">
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
-			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet)"/>
+			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet/hp:document/*)"/>
 			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
 		</XSLT:template>
 	</xsl:template>
@@ -271,18 +271,22 @@
 	
 	<!-- Wraps the context node in a container element. -->
 	<xsl:template match="xproc:wrap-sequence[@group-adjacent]" mode="xproc:step">
-		<XSLT:template match="/hp:documents" mode="{name()}-{@name}">
-			<err:HP0002>The <xsl:value-of select="name()"/> step option 'group-adjacent' is not supported.</err:HP0002>
+		<XSLT:template match="hp:documents" mode="{name()}-{@name}" priority="2">
+			<hp:document>
+				<err:HP0002>The <xsl:value-of select="name()"/> step option 'group-adjacent' is not supported.</err:HP0002>
+			</hp:document>
 		</XSLT:template>
 	</xsl:template>
 	
 	
 	<!-- Wraps the context node in a container element. -->
 	<xsl:template match="xproc:wrap-sequence" mode="xproc:step" hp:implemented="true">
-		<XSLT:template match="/" mode="{name()}-{@name}">
-			<XSLT:element name="{@wrapper}">
-				<XSLT:copy-of select="." copy-namespaces="no"/>
-			</XSLT:element>
+		<XSLT:template match="hp:documents" mode="{name()}-{@name}" priority="2">
+			<hp:document>
+				<XSLT:element name="{@wrapper}">
+					<XSLT:copy-of select="hp:document/*" copy-namespaces="no"/>
+				</XSLT:element>
+			</hp:document>
 		</XSLT:template>
 	</xsl:template>
 	
@@ -291,7 +295,7 @@
 	
 	<!-- Counts the number of documents in the source input sequence.  -->
 	<xsl:template match="xproc:count" mode="xproc:step" hp:implemented="false">
-		<XSLT:template match="/" mode="{name()}-{@name}">
+		<XSLT:template match="hp:documents" mode="{name()}-{@name}" priority="2">
 			<XSLT:param name="input-source" as="document-node()*"/>
 			<XSLT:variable name="limit" select="{if (@limit) then @limit else 0}" as="xs:integer"/>
 			<XSLT:variable name="count" select="count($input-source/*)" as="xs:integer"/>

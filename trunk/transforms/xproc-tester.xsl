@@ -130,7 +130,7 @@
 		<xsl:param name="expectedDocs" as="document-node()*" tunnel="yes"/>
 		<xsl:param name="test" as="element()" tunnel="yes"/>
 		<xsl:variable name="actualDocs" as="document-node()*">
-			<xsl:for-each select="hp:documents/hp:document">
+			<xsl:for-each select="hp:document">
 				<xsl:document>
 					<xsl:copy-of select="*"/>
 				</xsl:document>
@@ -272,12 +272,14 @@
 				uri="http://tests.xproc.org/tests/required/{$href}">
 			<title><xsl:value-of select="$title"/></title>
 			<expected>
-				<xsl:sequence select="for $doc in $expectedDocs return 
-						saxon:serialize($doc, 'escapedMarkup')"/>
+				<!--<xsl:sequence select="for $doc in $expectedDocs return 
+						saxon:serialize($doc, 'escapedMarkup')"/>-->
+				<xsl:sequence select="$expectedDocs"/>
 			</expected>
 			<actual>
-				<xsl:sequence select="for $doc in $actualDocs return 
-						saxon:serialize($doc, 'escapedMarkup')"/>
+				<!--<xsl:sequence select="for $doc in $actualDocs return 
+						saxon:serialize($doc, 'escapedMarkup')"/>-->
+				<xsl:sequence select="$actualDocs"/>
 			</actual>
 		</fail>
 	</xsl:template>
