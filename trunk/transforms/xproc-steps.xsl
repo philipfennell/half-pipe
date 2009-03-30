@@ -243,8 +243,13 @@
 			<xsl:apply-templates select="p:input" mode="xproc:step-inputs"/>
 			<XSLT:choose>
 				
-				<XSLT:when test="number('{@version}') = number($input-stylesheet/xsl:*/@version)">
-					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($input-stylesheet/hp:document/*)"/>
+				<XSLT:when test="number('{@version}') = number($input-stylesheet/hp:document/xsl:*/@version)">
+					<XSLT:variable name="stylesheetDoc">
+						<XSLT:document>
+							<XSLT:copy-of select="$input-stylesheet/hp:document/*"/>
+						</XSLT:document>
+					</XSLT:variable>
+					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($stylesheetDoc)"/>
 					<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
 				</XSLT:when>
 				<XSLT:otherwise>
