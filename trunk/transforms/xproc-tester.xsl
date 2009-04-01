@@ -124,8 +124,8 @@
 	</xsl:template>
 	
 	
-	<!--  -->
-	<xsl:template match="hp:result" mode="hp:processor_job-bag">
+	<!-- The result portion of the job-bag. -->
+	<xsl:template match="hp:pipeline-outputs" mode="hp:processor_job-bag">
 		<xsl:param name="href" as="xs:string?" tunnel="yes"/>
 		<xsl:param name="expectedDocs" as="document-node()*" tunnel="yes"/>
 		<xsl:param name="test" as="element()" tunnel="yes"/>
