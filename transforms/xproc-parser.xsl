@@ -78,6 +78,8 @@
 			<xsl:namespace name="xproc" select="'http://www.w3.org/ns/xproc'"/>
 			<xsl:namespace name="xsl" select="'http://www.w3.org/1999/XSL/Transform'"/>
 			
+			<xsl:attribute name="name" select="'pipeline'"/>
+			
 			<xsl:copy-of select="@*"/>
 			
 			<!-- Ensure source/result ports are declared. -->
