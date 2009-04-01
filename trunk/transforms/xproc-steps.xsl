@@ -88,7 +88,18 @@
 	<!-- Deletes (ignores) nodes that are matching the 'match' XPath expression. -->
 	<xsl:template match="xproc:delete" mode="xproc:step" hp:implemented="true">
 		<XSLT:template match="{@match}" mode="{name()}-{@name}"/>
-		<xsl:call-template name="hp:identityTransform"/>
+		<!--<xsl:call-template name="hp:identityTransform"/>-->
+		
+		<XSLT:template match="*" mode="{name()}-{@name}">
+			<XSLT:copy copy-namespaces="no">
+				<XSLT:apply-templates select="@*" mode="#current"/>
+				<XSLT:apply-templates select="*|text()|comment()|processing-instruction()" mode="#current"/>
+			</XSLT:copy>
+		</XSLT:template>
+		
+		<XSLT:template match="@*" mode="{name()}-{@name}">
+			<XSLT:copy-of select="."/>
+		</XSLT:template>
 	</xsl:template>
 	
 	
