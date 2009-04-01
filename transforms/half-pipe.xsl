@@ -106,8 +106,17 @@
 	
 	<!-- Copies the job-bag wrapper. -->
 	<xsl:template match="hp:job-bag" mode="hp:compiler_job-bag">
+		<xsl:param name="sourcePort" as="document-node()" tunnel="yes"/>
+		<xsl:param name="parameters" as="element()*" tunnel="yes"/>
+		
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
+			<hp:pipeline-inputs>
+				<xsl:copy-of select="$sourcePort"/>
+			</hp:pipeline-inputs>
+			<hp:pipeline-parameters>
+				<xsl:copy-of select="$parameters"/>
+			</hp:pipeline-parameters>
 			<xsl:apply-templates select="*" mode="#current"/>
 		</xsl:copy>
 	</xsl:template>
@@ -136,16 +145,9 @@
 			<xsl:copy-of select="."/>
 		</xsl:if>
 		
-		<hp:result>
+		<hp:pipeline-outputs>
 			<xsl:copy-of select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()"/>
-		</hp:result>
-		<!--<hp:results>
-			<xsl:for-each select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()">
-				<hp:result>
-					<xsl:copy-of select="."/>
-				</hp:result>
-			</xsl:for-each>
-		</hp:results>-->
+		</hp:pipeline-outputs>
 	</xsl:template>
 	
 </xsl:transform>
