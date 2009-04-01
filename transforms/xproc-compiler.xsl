@@ -267,7 +267,7 @@
 	<!-- Source input port takes SOURCE port (parameter) or the document root as its content. -->
 	<xsl:template match="p:input[@port = 'source']" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="($SOURCE, /hp:documents/*)[1]"/>
+			<XSLT:sequence select="if ($SOURCE) then $SOURCE else /hp:documents/*"/>
 		</hp:input>
 	</xsl:template>
 	
@@ -283,7 +283,7 @@
 	<!-- Result port takes source port as its content. -->
 	<xsl:template match="p:output" mode="xproc:pipe-ports">
 		<hp:output port="{@port}">
-			<XSLT:sequence select="($SOURCE, /hp:documents/*)[1]"/>
+			<XSLT:sequence select="if ($SOURCE) then $SOURCE else /hp:documents/*"/>
 		</hp:output>
 	</xsl:template>
 	
