@@ -305,12 +305,14 @@
 	
 	
 	<!-- Counts the number of documents in the source input sequence.  -->
-	<xsl:template match="xproc:count" mode="xproc:step" hp:implemented="false">
+	<xsl:template match="xproc:count" mode="xproc:step" hp:implemented="true">
 		<XSLT:template match="hp:documents" mode="{name()}-{@name}" priority="2">
 			<XSLT:param name="input-source" as="document-node()*"/>
 			<XSLT:variable name="limit" select="{if (@limit) then @limit else 0}" as="xs:integer"/>
-			<XSLT:variable name="count" select="count($input-source/*)" as="xs:integer"/>
-			<c:result><XSLT:value-of select="if ($limit gt 0) then (if ($count le $limit) then $count else $limit) else $count"/></c:result>
+			<XSLT:variable name="count" select="count(*)" as="xs:integer"/>
+			<hp:document>
+				<c:result><XSLT:value-of select="if ($limit gt 0) then (if ($count le $limit) then $count else $limit) else $count"/></c:result>
+			</hp:document>
 		</XSLT:template>
 	</xsl:template>
 	
