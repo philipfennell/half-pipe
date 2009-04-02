@@ -64,13 +64,13 @@
 	
 	
 	<!-- Catch-all to ensure errors propergate through the pipeline to the end. -->
-	<xsl:template match="xproc:*" mode="xproc:step" priority="10">
-		<XSLT:template match="err:*" mode="{name()}-{@name}" priority="10">
+	<!-- <xsl:template match="xproc:*" mode="xproc:step" priority="10">
+		<XSLT:template match="/hp:document/err:*" mode="{name()}-{@name}" priority="10">
 			<XSLT:copy-of select="."/>
 		</XSLT:template>
 		
 		<xsl:next-match/>
-	</xsl:template>
+	</xsl:template> -->
 	
 	
 	
