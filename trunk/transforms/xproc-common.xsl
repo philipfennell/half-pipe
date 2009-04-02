@@ -13,6 +13,8 @@
 		exclude-result-prefixes="saxon t xhtml xproc xsl"
 		version="2.0">
 	
+	<xsl:output name="xml" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
+			saxon:indent-spaces="4"/>
 	
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		xmlns:dcterms="http://purl.org/dc/terms/">
@@ -25,6 +27,79 @@
 			<dcterms:description>Pipeline functions and templates common to the parser, compiler and processor.</dcterms:description>
 		</rdf:Description>
 	</rdf:RDF>
+	
+	
+	
+	
+	<!-- Wrapper function for saxon:serialize. 
+		 Returns a string representation of the passed document. -->
+	<xsl:function name="hp:serialize" as="xs:string?">
+		<xsl:param name="document" as="node()"/>
+		<xsl:param name="format" as="xs:string"/>
+		
+		<xsl:value-of select="saxon:serialize($document, 'xml')"/>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:compile-stylesheet.
+		 Returns the compile transform. -->
+	<xsl:function name="hp:compile-transform">
+		<xsl:param name="transformDoc" as="document-node()"/>
+		
+		<xsl:sequence select="saxon:compile-stylesheet($transformDoc)"/>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:transform. 
+		 Returns the result. -->
+	<xsl:function name="hp:transform" as="document-node()?">
+		<xsl:param name="compiledTransform"/>
+		<xsl:param name="source" as="document-node()*"/>
+		
+		<xsl:sequence select="saxon:transform($compiledTransform, $source)"/>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:transform. 
+		 Returns the result. -->
+	<xsl:function name="hp:transform" as="document-node()?">
+		<xsl:param name="compiledTransform"/>
+		<xsl:param name="source" as="document-node()*"/>
+		<xsl:param name="parameters" as="item()*"/>
+		
+		<xsl:sequence select="saxon:transform($compiledTransform, $source, $parameters)"/>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:evaluate(xs:string). 
+		 Returns the result of evaluating the XPath expression with 
+		 respect to the context node. -->
+	<xsl:function name="hp:evaluate" as="item()*">
+		<xsl:param name="contextNode" as="node()"/>
+		<xsl:param name="xpathExpression" as="xs:string?"/>
+		
+		<xsl:for-each select="$contextNode">
+			<xsl:value-of select="saxon:evaluate($xpathExpression)"/>
+		</xsl:for-each>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:parse(xs:string).
+		 Returns a parsed XML document. -->
+	<xsl:function name="hp:parse" as="document-node()*">
+		<xsl:param name="string" as="xs:string?"/>
+		<xsl:sequence select="saxon:parse($string)"/>
+	</xsl:function>
+	
+	
+	<!-- Wrapper function for saxon:path(). 
+		 Returns the XPath location path of the context node. -->
+	<xsl:function name="hp:path" as="xs:string?">
+		<xsl:param name="contextNode" as="node()"/>
+		<xsl:for-each select="$contextNode">
+			<xsl:value-of select="saxon:path()"/>
+		</xsl:for-each>
+	</xsl:function>
 	
 	
 	

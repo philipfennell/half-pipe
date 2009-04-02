@@ -204,12 +204,12 @@
 	
 	<!-- Evaluates the XPath expression of the select attribute. -->
 	<xsl:template match="p:with-option[@name = 'attribute-value']" mode="xproc:add-attribute">
-		<XSLT:value-of select="saxon:evaluate('{@select}')"/>
+		<XSLT:value-of select="hp:evaluate(., '{@select}')"/>
 	</xsl:template>
 	
 	<!-- Evaluates the XPath expression of the select attribute. -->
 	<xsl:template match="p:with-option[@name = 'attribute-name']" mode="xproc:add-attribute">
-		<xsl:variable name="attributeName" select="saxon:evaluate(@select)" as="xs:string"/>
+		<xsl:variable name="attributeName" select="hp:evaluate(., @select)" as="xs:string"/>
 		<xsl:variable name="namespacePrefix" select="substring-before($attributeName, ':')" as="xs:string?"/>
 		<xsl:attribute name="name" select="$attributeName"/>
 		<xsl:if test="$namespacePrefix">
@@ -260,8 +260,8 @@
 							<XSLT:copy-of select="$input-stylesheet/hp:document/*"/>
 						</XSLT:document>
 					</XSLT:variable>
-					<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($stylesheetDoc)"/>
-					<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+					<XSLT:variable name="compiledTransform" select="hp:compile-transform($stylesheetDoc)"/>
+					<XSLT:copy-of select="hp:transform($compiledTransform, .)"/>
 				</XSLT:when>
 				<XSLT:otherwise>
 					<XSLT:copy-of select="hp:error('err:XC0038', 'XSLT Version {@version} is not supported')"/>
@@ -282,8 +282,8 @@
 					<XSLT:copy-of select="$input-stylesheet/hp:document/*"/>
 				</XSLT:document>
 			</XSLT:variable>
-			<XSLT:variable name="compiledTransform" select="saxon:compile-stylesheet($stylesheetDoc)"/>
-			<XSLT:copy-of select="saxon:transform($compiledTransform, .)"/>
+			<XSLT:variable name="compiledTransform" select="hp:compile-transform($stylesheetDoc)"/>
+			<XSLT:copy-of select="hp:transform($compiledTransform, .)"/>
 			<!-- <XSLT:copy-of select="$input-stylesheet/hp:document/*"/> -->
 		</XSLT:template>
 	</xsl:template>
@@ -334,7 +334,7 @@
 		have no effect on the input. Basically, the step is ignored if it is 
 		not supported. -->
 	<xsl:template match="xproc:*" mode="xproc:step">
-		<xsl:message>[XProc][Compiler] Step '<xsl:value-of select="saxon:path()"/>' is not supported. It will be ignored at run-time.</xsl:message>
+		<xsl:message>[XProc][Compiler] Step '<xsl:value-of select="hp:path(.)"/>' is not supported. It will be ignored at run-time.</xsl:message>
 		
 		<XSLT:template match="/" mode="{name()}-{@name}">
 			<err:HP0001>The step '<xsl:value-of select="name()"/>' is not supported.</err:HP0001>

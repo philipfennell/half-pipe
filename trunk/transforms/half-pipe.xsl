@@ -85,7 +85,7 @@
 		<xsl:variable name="parameters" as="element()*">
 			<xsl:for-each select="$inputPorts/*[local-name() != 'SOURCE']">
 				<xsl:copy>
-					<xsl:copy-of select="saxon:serialize(*, 'xml')"/>
+					<xsl:copy-of select="hp:serialize(*, 'xml')"/>
 				</xsl:copy>
 			</xsl:for-each>
 		</xsl:variable>
@@ -139,14 +139,14 @@
 				<xsl:copy-of select="*"/>
 			</xsl:document>
 		</xsl:variable>
-		<xsl:variable name="compiledTransform" select="saxon:compile-stylesheet($pipelineTransform)"/>
+		<xsl:variable name="compiledTransform" select="hp:compile-transform($pipelineTransform)"/>
 		
 		<xsl:if test="$mode = 'debug'">
 			<xsl:copy-of select="."/>
 		</xsl:if>
 		
 		<hp:pipeline-outputs>
-			<xsl:copy-of select="saxon:transform($compiledTransform, $sourcePort, $parameters)/element()"/>
+			<xsl:copy-of select="hp:transform($compiledTransform, $sourcePort, $parameters)/element()"/>
 		</hp:pipeline-outputs>
 	</xsl:template>
 	
