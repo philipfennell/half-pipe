@@ -105,6 +105,10 @@
 	</xsl:template>
 	
 	
+	<!-- Ignore these two parts of the job-bag. -->
+	<xsl:template match="hp:pipeline-inputs | hp:pipeline-parameters" mode="hp:processor_job-bag"/>
+	
+	
 	<!-- If present, write the parsed and compiled pipelines to the 'debug' 
 		 directory. -->
 	<xsl:template match="hp:parsed-pipeline" 

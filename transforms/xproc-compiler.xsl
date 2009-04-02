@@ -146,6 +146,10 @@
 			<!-- Start compiling the pipeline. -->
 			<xsl:apply-templates select="*" mode="#current"/>
 			
+			<XSLT:template match="comment() | processing-instruction()" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}">
+				<XSLT:copy-of select="."/>
+			</XSLT:template>
+			
 			<!-- #all -->
 			<XSLT:template match="hp:documents" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="1">
 				<XSLT:variable name="documents" as="document-node()*">
@@ -275,7 +279,7 @@
 	<!--  -->
 	<xsl:template match="p:input" mode="xproc:pipe-ports">
 		<hp:input port="{@port}">
-			<XSLT:sequence select="saxon:parse(${upper-case(@port)})"/>
+			<XSLT:sequence select="hp:parse(${upper-case(@port)})"/>
 		</hp:input>
 	</xsl:template>
 	
