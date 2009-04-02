@@ -151,6 +151,10 @@
 			</XSLT:template>
 			
 			<!-- #all -->
+			<XSLT:template match="hp:documents[hp:document/err:*]" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="10">
+				<XSLT:copy-of select="*"/>
+			</XSLT:template>
+			
 			<XSLT:template match="hp:documents" mode="{for $step in .//*[@hp:step = 'true'] return concat(name($step), '-', $step/@name, '')}" priority="1">
 				<XSLT:variable name="documents" as="document-node()*">
 					<XSLT:for-each select="hp:document">
