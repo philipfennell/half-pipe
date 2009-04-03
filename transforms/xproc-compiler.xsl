@@ -179,7 +179,6 @@
 	<xsl:template match="xproc:serialization" mode="xproc:serialize">
 		<XSLT:output>
 			<xsl:apply-templates select="@* except (@port)" mode="#current"/>
-			<!--<xsl:attribute name="name" select="../@name"/>-->
 		</XSLT:output>
 	</xsl:template>
 	
@@ -437,7 +436,17 @@
 	
 	<!-- Generate code to embed content from the result port of the previous step. -->
 	<xsl:template match="xproc:input" mode="xproc:pipe-input">
-		<XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']{if (@select) then @select else '/*'}"/>
+		
+		<!-- Need a for-each that applies the select expression to the contents
+			 of each hp:document. -->
+		
+		<XSLT:for-each select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']/*">
+			<hp:document>
+				<XSLT:copy-of select="{@select}"/>
+			</hp:document>
+		</XSLT:for-each>
+		
+		<!-- <XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']/*"/> -->
 	</xsl:template>
 	
 	
