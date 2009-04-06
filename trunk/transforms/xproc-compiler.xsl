@@ -442,11 +442,9 @@
 		
 		<XSLT:for-each select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']/*">
 			<hp:document>
-				<XSLT:copy-of select="{@select}"/>
+				<XSLT:copy-of select="{if (@select) then if (starts-with(@select, '/')) then substring-after(@select, '/') else @select else '*'}"/>
 			</hp:document>
 		</XSLT:for-each>
-		
-		<!-- <XSLT:sequence select="${(ancestor::hp:parsed-pipeline[1]/*/@name, hp:precedingStepName(current()))[1]}/hp:job-bag/hp:output[@port = 'result']/*"/> -->
 	</xsl:template>
 	
 	
