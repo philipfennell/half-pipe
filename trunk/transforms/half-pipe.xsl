@@ -56,7 +56,7 @@
 			</hp:inputs>
 		</xsl:variable>
 		
-		<xsl:copy-of select="xproc:process(., $inputPorts, $MODE)"/>
+		<xsl:copy-of select="xproc:process(., $inputPorts, $MODE)/hp:pipeline-outputs/hp:document/*"/>
 	</xsl:template>
 	
 	
