@@ -19,7 +19,7 @@
 	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 		saxon:indent-spaces="4"/>
 	
-	<xsl:param name="MODE" select="''" as="xs:string"/>
+	<xsl:param name="MODE" select="''" as="xs:string?"/>
 	
 	
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"

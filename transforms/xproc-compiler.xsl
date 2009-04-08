@@ -21,7 +21,7 @@
 	<xsl:output name="debug" method="xml" indent="yes" encoding="UTF-8" media-type="application/xml"
 			saxon:indent-spaces="4"/>
 	
-	<xsl:param name="MODE" select="''" as="xs:string"/>
+	<xsl:param name="MODE" select="''" as="xs:string?"/>
 	
 	
 	<xsl:namespace-alias stylesheet-prefix="XSLT" result-prefix="xsl"/>
