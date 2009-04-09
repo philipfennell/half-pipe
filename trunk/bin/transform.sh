@@ -1,3 +1,3 @@
 #!/bin/bash
-
-java -jar ~/Library/Saxon/saxon9.jar -t -o $1 $2 $3 $4
+# Basic XST transformer script
+java -jar lib/saxon9.jar -t -o $1 $2 $3 $4
