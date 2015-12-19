@@ -1,0 +1,4 @@
+A partial implementation of the [W3C's XML Pipeline Language](http://www.w3.org/TR/xproc/) (XProc) .
+Choosing to implement an XProc processor in [XSLT](http://www.w3.org/TR/xslt20/) means there are some features that it will not be possible to support in pure XSLT, hence the name '**half**-pipe'. On the flip-side though, using XSLT to compile an 'executable' XSLT transform that will carry-out the steps defined in the XML pipeline definition allows you to work on the same level as both the pipeline definition and the XML data it is processing.
+
+Using XSLT requires a transformation engine, and in this case half-pipe uses [Saxon 9](http://www.saxonica.com/). There are some useful extensions provided by Saxon that make implementation easier than it would otherwise be.
